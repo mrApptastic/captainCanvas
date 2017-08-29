@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>captainCanvas</title>
+<meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel='stylesheet' href='http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css' />
+<link rel='stylesheet' href='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css'>
+<script src= 'http://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.min.js'></script>
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+<script src='http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js'></script>
+<script src= 'http://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js'></script>
+<script src='https://use.fontawesome.com/dc7038f777.js'></script>
+<style>
+#toggleBandit {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	z-index: 99;
+}
+#toggleBandit span {
+	color: rgba(155,155,155,0.8);
+}
+#toolBox {
+	position: fixed;
+	right: 0;
+	top: 0;
+	z-index: 98;
+	width: 35%;
+}
+</style>
+</head>
+<body>
+<span id="toggleBandit"><span>Gem V&aelig;rkt&oslash;jer</span><input id="toolToggler" type="checkbox" /></span>
+<canvas id="captainCanvas"></canvas>
+<div id="toolBox">
+<h1>Controls:</h1>
+<select id="selectedFunction"></select>
+</div>
+<script>
+var canvasBandit = (function () {
+	var captainCanvas = function(canvas,tools,func) {
+		this.id = document.getElementById(canvas);
+		this.context = this.id.getContext("2d");
+		this.properties = {"height" : 400, "width" : 400, "fixed" : false };
+		this.tools = document.getElementById(tools);
+		this.data = [];
+		this.brush = {"height" : 10, "width" : 10, "colours" : ["Red", "Green", "Blue","Orange","Yellow","Purple"]};
+		this.drawingFunctions = [{"Name" : "fillRect","Arguments" : ["X","Y","W","H"]},{"Name" : "strokeRect","Arguments" : ["X","Y","W","H"]}];
+		this.json = false;
+		this.drawing = false;
+		this.draw = function(event) {
+			if (this.drawing == true) {
+				var x = event.pageX - this.id.offsetLeft;
+				var y = event.pageY - this.id.offsetTop;
+				var w = this.brush.width;
+				var h = this.brush.height;
+				//this.context.fillRect(x,y,w,h);
+				this.data.push({"Fct" : document.getElementById(func).value, "X" : x, "Y" : y, "W" : w, "H" : h});
+				// this.tools.innerHTML = JSON.stringify(Cpt.data);
+				this.drawData();
+			}
+		};
+		this.drawData = function () {
+			for (var i = 0; i < this.data.length; i++) {
+				// eval("this.context." + this.data[i].Fct + "(this.data[i].X,this.data[i].Y,this.data[i].W,this.data[i].H)");
+				this.context.fillRect(this.data[i].X,this.data[i].Y,this.data[i].W,this.data[i].H);
+			}
+		};
+		this.toogleTools = function (value) {
+			this.tools.style.display = value != true ?  "block" : "none";
+		};
+		this.init = function() {
+			this.id.setAttribute("width",window.innerWidth);
+			this.id.setAttribute("height",window.innerHeight);
+			this.drawData();
+		};
+		this.toolsInit = function() {
+			for (var i = 0; i < this.drawingFunctions.length; i++) {
+				document.getElementById(func).innerHTML += "<option value='" + this.drawingFunctions[i].Name + "'>" + this.drawingFunctions[i].Name + "</option>";
+			}
+		};
+	};
+	var Cpt = new captainCanvas("captainCanvas","toolBox","selectedFunction");
+	Cpt.id.addEventListener("mousemove", function(event) {
+		// Cpt.context.clearRect(0,0, 200, 200);
+		Cpt.draw(event);
+		//Cpt.context.strokeRect(event.pageX,event.pageY,5,5);
+		//Cpt.context.strokeRect(event.pageX,event.pageY,5,5);
+		//eval("Cpt.hej()");
+	});
+	Cpt.id.addEventListener("mousedown", function() {
+		Cpt.drawing = true;	
+	});
+	Cpt.id.addEventListener("mouseup", function() {
+		Cpt.drawing = false;	
+	});
+	document.getElementById("toolToggler").addEventListener("click", function(event) {
+		Cpt.toogleTools(this.checked);	
+	});
+	window.addEventListener("resize", function() {
+		Cpt.init();
+	});	
+	Cpt.init();
+	Cpt.toolsInit();
+})();
+</script>
+</body>
+</html>
