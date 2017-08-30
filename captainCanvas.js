@@ -8,24 +8,25 @@ var captainCanvas = function(canvas, tools, settings) {
 				"fit" : true,
 				"tog" : true
 			  };
+	cpt.fct = [{"Name" : "fillRect","Arguments" : ["X","Y","W","H"]},{"Name" : "strokeRect","Arguments" : ["X","Y","W","H"]}];
 	cpt.drg = false;
 	cpt.drw = function(event) {
 		if (cpt.drg == true) {
-			var x = event.pageX - cpt.id.offsetLeft;
-			var y = event.pageY - cpt.id.offsetTop;
-			var w = 10;
-			var h = 10;
-			cpt.dt.push({"Fct" : "fillRect", "X" : x, "Y" : y, "W" : w, "H" : h});
+            let f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
+			let x = event.pageX - cpt.id.offsetLeft;
+			let y = event.pageY - cpt.id.offsetTop;
+			let w = 20;
+			let h = 20;
+			cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
 			cpt.dat();
 		}
 	};
-	cpt.dat = function () {
+	cpt.dat = function () {        
+		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));
+        cpt.ct.fillStyle  = "red";
 		for (let i = 0; i < cpt.dt.length; i++) {
-			cpt.ct.fillRect(cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
+			cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
 		}
-	};
-	cpt.tls = function () {
-				
 	};
 	cpt.ref = function () {
 		cpt.id.setAttribute("width",window.innerWidth);
@@ -35,7 +36,7 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.rjsn = function(input) {
 		if (input.files && input.files[0]) {
 			var reader = new FileReader();            
-            reader.onload = function (e) {
+            		reader.onload = function (e) {
 				try {
 					cpt.dt = JSON.parse(e.target.result);
 					cpt.ref();
@@ -43,9 +44,9 @@ var captainCanvas = function(canvas, tools, settings) {
 				catch (e) {
 					alert(e);
 				}
-            }            
-            reader.readAsText(input.files[0]);
-        }
+        		}            
+            		reader.readAsText(input.files[0]);
+        	}
 	};
 	cpt.wjsn = function(fil) {
 		var json = JSON.stringify(cpt.dt);
@@ -58,7 +59,13 @@ var captainCanvas = function(canvas, tools, settings) {
 		var firstLine = '<?xml version="1.0" encoding="UTF-8"><svg width="' + cpt.id.getAttribute("width") + '" height="' + cpt.id.getAttribute("height") + '">';
 		var dataLines = '';
 		for (let i = 0; i < cpt.dt.length; i++) {
-			dataLines += '<rect x="' + cpt.dt[i].X  + '" y="' + cpt.dt[i].Y + '" width="' + cpt.dt[i].W + '" height="' + cpt.dt[i].H + '" style="fill:rgb(0,0,0);" />';
+			let funky = cpt.dt[i].Fct;
+			if (funky == "fillRect") {
+				dataLines += '<rect x="' + cpt.dt[i].X  + '" y="' + cpt.dt[i].Y + '" width="' + cpt.dt[i].W + '" height="' + cpt.dt[i].H + '" style="fill:rgb(0,0,0);" />';
+			}
+			else if (funky == "strokeRect") {
+				dataLines += '<rect x="' + cpt.dt[i].X  + '" y="' + cpt.dt[i].Y + '" width="' + cpt.dt[i].W + '" height="' + cpt.dt[i].H + '" style="fill:rgb(0,0,0);" />';
+			}			
 		}
 		var lastLine = '</svg>';
 		var svg = firstLine + dataLines + lastLine;
@@ -69,9 +76,9 @@ var captainCanvas = function(canvas, tools, settings) {
 		l.setAttribute('href', txt);
 		l.setAttribute('download', filename);
 		if (document.createEvent) {
-			let event = document.createEvent('MouseEvents');
-			event.initEvent('click', true, true);
-			l.dispatchEvent(event);
+			let ev = document.createEvent('MouseEvents');
+			ev.initEvent('click', true, true);
+			l.dispatchEvent(ev);
 		}
 		else {
 			l.click();
@@ -86,7 +93,10 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tl.appendChild(document.createElement("select"));
 				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";
 				cpt.tl.appendChild(document.createElement("br"));
-				cpt.tl.appendChild(document.createElement("br"));
+				cpt.tl.appendChild(document.createElement("br"));				
+				for (let i = 0; i < cpt.fct.length; i++) {
+					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + cpt.fct[i].Name + "'>" + cpt.fct[i].Name + "</option>";
+				}
 			/* Import JSON */
 				var importJSONLabel = document.createElement("label");
 				importJSONLabel.innerHTML = "Hent JSON&nbsp;";
