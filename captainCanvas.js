@@ -9,6 +9,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				"tog" : true
 			  };
 	cpt.fct = [{"Name" : "fillRect","Arguments" : ["X","Y","W","H"]},{"Name" : "strokeRect","Arguments" : ["X","Y","W","H"]}];
+    cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
 	cpt.drg = false;
 	cpt.drw = function(event) {
 		if (cpt.drg == true) {
@@ -36,7 +37,7 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.rjsn = function(input) {
 		if (input.files && input.files[0]) {
 			var reader = new FileReader();            
-            		reader.onload = function (e) {
+            	reader.onload = function (e) {
 				try {
 					cpt.dt = JSON.parse(e.target.result);
 					cpt.ref();
@@ -45,7 +46,7 @@ var captainCanvas = function(canvas, tools, settings) {
 					alert(e);
 				}
         		}            
-            		reader.readAsText(input.files[0]);
+            	reader.readAsText(input.files[0]);
         	}
 	};
 	cpt.wjsn = function(fil) {
@@ -72,9 +73,9 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.down((fil ? fil : "captainCanvas") + ".svg", "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
 	};
 	cpt.down = function (filename, txt) {
-		var l = document.createElement('a');
-		l.setAttribute('href', txt);
-		l.setAttribute('download', filename);
+		var l = document.createElement("a");
+		l.setAttribute("href", txt);
+		l.setAttribute("download", filename);
 		if (document.createEvent) {
 			let ev = document.createEvent('MouseEvents');
 			ev.initEvent('click', true, true);
@@ -88,15 +89,39 @@ var captainCanvas = function(canvas, tools, settings) {
 		/* Tool Box Contents */
 			/* Heading */
 				cpt.tl.appendChild(document.createElement("h1"));
+                cpt.tl.getElementsByTagName("h1")[0].innerHTML = "V&aelig;rkt&oslash;jer:";
 			/* Selected Function */
-				cpt.tl.getElementsByTagName("h1")[0].innerHTML = "V&aelig;rkt&oslash;jer:";
+            	var selectFuncLabel = document.createElement("label");
+				selectFuncLabel.innerHTML = "V&aelig;lg Funktion: &nbsp;";
+				cpt.tl.appendChild(selectFuncLabel);				
 				cpt.tl.appendChild(document.createElement("select"));
-				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";
-				cpt.tl.appendChild(document.createElement("br"));
-				cpt.tl.appendChild(document.createElement("br"));				
+				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";				
 				for (let i = 0; i < cpt.fct.length; i++) {
 					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + cpt.fct[i].Name + "'>" + cpt.fct[i].Name + "</option>";
 				}
+                cpt.tl.appendChild(document.createElement("br"));
+            /* Selected Colours*/
+                var selectColLabel = document.createElement("label");
+				selectColLabel.innerHTML = "V&aelig;lg Fyldfarve: &nbsp;";
+                cpt.tl.appendChild(selectColLabel);
+                var colSelect = document.createElement("select")
+                colSelect.className = cpt.tl.id + "_selectedFill";
+                cpt.tl.appendChild(colSelect);
+                for (let i = 0; i < cpt.col.length; i++) {
+                    document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
+                }
+                cpt.tl.appendChild(document.createElement("br"));
+                var selectFilLabel = document.createElement("label");
+				selectFilLabel.innerHTML = "V&aelig;lg Omkredsfarve: &nbsp;";
+                cpt.tl.appendChild(selectFilLabel);
+                var filSelect = document.createElement("select")
+                filSelect.className = cpt.tl.id + "_selectedStroke";
+                cpt.tl.appendChild(filSelect);
+                for (let i = 0; i < cpt.col.length; i++) {
+                    document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
+                }
+                cpt.tl.appendChild(document.createElement("br"));
+                cpt.tl.appendChild(document.createElement("br"));
 			/* Import JSON */
 				var importJSONLabel = document.createElement("label");
 				importJSONLabel.innerHTML = "Hent JSON&nbsp;";
