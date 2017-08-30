@@ -32,30 +32,20 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.id.setAttribute("height",window.innerHeight);
 		cpt.dat();		
 	};
-	cpt.rjsn = function(fil) {
-		/*
-		(function(){
-    
-    function onChange(event) {
-        var reader = new FileReader();
-        reader.onload = onReaderLoad;
-        reader.readAsText(event.target.files[0]);
-    }
-
-    function onReaderLoad(event){
-        console.log(event.target.result);
-        var obj = JSON.parse(event.target.result);
-        alert_data(obj.name, obj.family);
-    }
-    
-    function alert_data(name, family){
-        alert('Name : ' + name + ', Family : ' + family);
-    }
- 
-    document.getElementById('file').addEventListener('change', onChange);
-
-}());
-		*/
+	cpt.rjsn = function(input) {
+		if (input.files && input.files[0]) {
+			var reader = new FileReader();            
+            reader.onload = function (e) {
+				try {
+					cpt.dt = JSON.parse(e.target.result);
+					cpt.ref();
+				}
+				catch (e) {
+					alert(e);
+				}
+            }            
+            reader.readAsText(input.files[0]);
+        }
 	};
 	cpt.wjsn = function(fil) {
 		var json = JSON.stringify(cpt.dt);
@@ -107,7 +97,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				importJSON.className = cpt.tl.id + "_importJSON";
 				cpt.tl.appendChild(importJSON);
 				document.getElementsByClassName(cpt.tl.id + "_importJSON")[0].addEventListener("change", function(event) {
-					cpt.rjsn(event);
+					cpt.rjsn(this);
 				});
 				cpt.tl.appendChild(document.createElement("br"));
 				cpt.tl.appendChild(document.createElement("br"));
