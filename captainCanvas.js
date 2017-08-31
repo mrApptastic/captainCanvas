@@ -8,25 +8,46 @@ var captainCanvas = function(canvas, tools, settings) {
 				"fit" : true,
 				"tog" : true
 			  };
-	cpt.fct = [{"Name" : "fillRect","Arguments" : ["X","Y","W","H"]},{"Name" : "strokeRect","Arguments" : ["X","Y","W","H"]}];
+	cpt.fct = ["fillRect","strokeRect"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
+	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent" };
 	cpt.drg = false;
 	cpt.drw = function(event) {
 		if (cpt.drg == true) {
             let f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
 			let x = event.pageX - cpt.id.offsetLeft;
 			let y = event.pageY - cpt.id.offsetTop;
-			let w = 20;
-			let h = 20;
+			let w = cpt.brs.Wth;
+			let h = cpt.brs.Hgt;
 			cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
 			cpt.dat();
 		}
 	};
+	cpt.cls = function () {
+		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
+		cpt.brs.Fil = fill;
+		cpt.dt.push({"Fct" : "fillStyle", "Val" : cpt.brs.Fil});
+		var stroke = document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value;
+		cpt.brs.Str = stroke;
+		cpt.dt.push({"Fct" : "strokeStyle", "Val" : cpt.brs.Str});
+	};
 	cpt.dat = function () {        
 		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));
-        cpt.ct.fillStyle  = "red";
+        
 		for (let i = 0; i < cpt.dt.length; i++) {
-			cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
+			let funky = cpt.dt[i].Fct;
+			if (funky == "fillRect") {
+				cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
+			}
+			else if (funky == "strokeRect") {
+				cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
+			}
+			else if (funky == "fillStyle") {
+				cpt.ct.fillStyle = cpt.dt[i].Val;
+			}
+			else if (funky == "strokeStyle") {
+				cpt.ct.strokeStyle = cpt.dt[i].Val;
+			}
 		}
 	};
 	cpt.ref = function () {
@@ -37,7 +58,7 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.rjsn = function(input) {
 		if (input.files && input.files[0]) {
 			var reader = new FileReader();            
-            	reader.onload = function (e) {
+            reader.onload = function (e) {
 				try {
 					cpt.dt = JSON.parse(e.target.result);
 					cpt.ref();
@@ -45,18 +66,18 @@ var captainCanvas = function(canvas, tools, settings) {
 				catch (e) {
 					alert(e);
 				}
-        		}            
-            	reader.readAsText(input.files[0]);
-        	}
+        	}            
+            reader.readAsText(input.files[0]);
+        }
 	};
-	cpt.wjsn = function(fil) {
+	cpt.wjsn = function (fil) {
 		var json = JSON.stringify(cpt.dt);
 		cpt.down((fil ? fil : "captainCanvas")  + ".json", "data:application/json;charset=utf-8," + encodeURIComponent(json));
 	};
 	cpt.rsvg = function() {
 
 	};
-	cpt.wsvg = function(fil) {
+	cpt.wsvg = function (fil) {
 		var firstLine = '<?xml version="1.0" encoding="UTF-8"><svg width="' + cpt.id.getAttribute("width") + '" height="' + cpt.id.getAttribute("height") + '">';
 		var dataLines = '';
 		for (let i = 0; i < cpt.dt.length; i++) {
@@ -71,6 +92,9 @@ var captainCanvas = function(canvas, tools, settings) {
 		var lastLine = '</svg>';
 		var svg = firstLine + dataLines + lastLine;
 		cpt.down((fil ? fil : "captainCanvas") + ".svg", "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
+	};
+	cpt.wpng = function (fil) {
+		cpt.down((fil ? fil : "captainCanvas")  + ".png", "data:image/png;base64;" + cpt.id.toDataURL());
 	};
 	cpt.down = function (filename, txt) {
 		var l = document.createElement("a");
@@ -90,19 +114,23 @@ var captainCanvas = function(canvas, tools, settings) {
 			/* Heading */
 				cpt.tl.appendChild(document.createElement("h1"));
                 cpt.tl.getElementsByTagName("h1")[0].innerHTML = "V&aelig;rkt&oslash;jer:";
+			/* Brush Heading */
+				var brush = document.createElement("h3");
+				brush.innerHTML = "Pensel:"
+				cpt.tl.appendChild(brush);
 			/* Selected Function */
             	var selectFuncLabel = document.createElement("label");
-				selectFuncLabel.innerHTML = "V&aelig;lg Funktion: &nbsp;";
+				selectFuncLabel.innerHTML = "Funktion: &nbsp;";
 				cpt.tl.appendChild(selectFuncLabel);				
 				cpt.tl.appendChild(document.createElement("select"));
 				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";				
 				for (let i = 0; i < cpt.fct.length; i++) {
-					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + cpt.fct[i].Name + "'>" + cpt.fct[i].Name + "</option>";
+					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + cpt.fct[i] + "'>" + cpt.fct[i] + "</option>";
 				}
                 cpt.tl.appendChild(document.createElement("br"));
             /* Selected Colours*/
                 var selectColLabel = document.createElement("label");
-				selectColLabel.innerHTML = "V&aelig;lg Fyldfarve: &nbsp;";
+				selectColLabel.innerHTML = "Fyldfarve: &nbsp;";
                 cpt.tl.appendChild(selectColLabel);
                 var colSelect = document.createElement("select")
                 colSelect.className = cpt.tl.id + "_selectedFill";
@@ -110,9 +138,11 @@ var captainCanvas = function(canvas, tools, settings) {
                 for (let i = 0; i < cpt.col.length; i++) {
                     document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
                 }
+				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].getElementsByTagName("option")[cpt.col.indexOf("Black")].setAttribute("selected","");
+				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].addEventListener("change",cpt.cls);
                 cpt.tl.appendChild(document.createElement("br"));
                 var selectFilLabel = document.createElement("label");
-				selectFilLabel.innerHTML = "V&aelig;lg Omkredsfarve: &nbsp;";
+				selectFilLabel.innerHTML = "Omkredsfarve: &nbsp;";
                 cpt.tl.appendChild(selectFilLabel);
                 var filSelect = document.createElement("select")
                 filSelect.className = cpt.tl.id + "_selectedStroke";
@@ -120,6 +150,8 @@ var captainCanvas = function(canvas, tools, settings) {
                 for (let i = 0; i < cpt.col.length; i++) {
                     document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
                 }
+				document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].getElementsByTagName("option")[cpt.col.indexOf("Transparent")].setAttribute("selected","");
+				document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].addEventListener("change",cpt.cls);
                 cpt.tl.appendChild(document.createElement("br"));
                 cpt.tl.appendChild(document.createElement("br"));
 			/* Import JSON */
@@ -160,6 +192,15 @@ var captainCanvas = function(canvas, tools, settings) {
 				document.getElementsByClassName(cpt.tl.id + "_exportSVG")[0].addEventListener("click", function() {
 					cpt.wsvg(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
 				});
+			/* Export PNG */
+				var exportPNG = document.createElement("input");
+				exportPNG.value = "Gem PNG";
+				exportPNG.setAttribute("type", "button");
+				exportPNG.className = cpt.tl.id + "_exportPNG";
+				cpt.tl.appendChild(exportPNG);
+				document.getElementsByClassName(cpt.tl.id + "_exportPNG")[0].addEventListener("click", function() {
+					cpt.wpng(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
+				});
 		/* Tool Box Toggler */
 		if (cpt.set.tog) {
 			cpt.tl.style.cssText = "position: fixed; right: 0; top: 0; z-index: 98; width: 30vw;"
@@ -196,7 +237,8 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.ref();
 			});
 		}
-		cpt.ref();		
+		cpt.ref();	
+		cpt.cls();		
 	};
 	cpt.init();
 };
@@ -242,5 +284,6 @@ var captainCanvas = function(canvas, tools, settings) {
 			}
 		};
 	};
+	til lyden af endnu en sang, hvis budskab kan stille sig i kø med lignende budskaber om fr hos ligeglade og ligegyldige mennesker.
 	*/
 	
