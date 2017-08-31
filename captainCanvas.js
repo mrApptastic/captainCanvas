@@ -285,5 +285,23 @@ var captainCanvas = function(canvas, tools, settings) {
 		};
 	};
 	til lyden af endnu en sang, hvis budskab kan stille sig i kø med lignende budskaber om fr hos ligeglade og ligegyldige mennesker.
+	
+	Prerequisites
+
+Following are the prerequisites for creating a VPN connection and for connecting to your organization network by using the VPN connection.
+
+    To create a VPN connection, you must know the IP address or fully qualified domain name (FQDN) of the VPN server to which you want to connect. For example, if you work for an organization named Contoso and the Contoso VPN server is named VPN1.contoso.com and has an IP address of 10.0.0.25, you must have this information ready when you create your VPN connection to the server.
+
+    To connect to a VPN server at your organization, you must know your user name and password. If you do not know your user name and password, you should talk to your organization Help Desk before attempting to connect to the organization network.
+
+    To connect to a VPN server at your organization, you must have permission from your organization to do so. If you are unable to connect to your organization network by using a VPN connection, you should talk to your organization Help Desk to find out if you have permission to connect from a remote location.
+
+    To connect to a VPN server at your organization, your computer or device must be connected to the Internet.
+
+    If your organization requires you to use a smart card to connect with VPN, you must have a smart card reader and a smart card connected to your computer or device before you attempt to connect to your organization. If your organization uses virtual smart cards, you must have a virtual smart card installed on the computer or device.
+
+    If you are unable to create a VPN connection by using this topic and if your computer or device is joined to your organization's domain, it is possible that your organization does not permit creation of VPN connections on your computer. If this is the case, you should talk to your organization Help Desk to find out if you have permission to create VPN connections to connect to your organization network.
+	
+	185.101.89.35
 	*/
 	
