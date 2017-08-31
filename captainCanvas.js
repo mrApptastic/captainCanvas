@@ -13,15 +13,19 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent" };
 	cpt.drg = false;
 	cpt.drw = function(event) {
+        var f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
+		var x = event.pageX - cpt.id.offsetLeft;
+		var y = event.pageY - cpt.id.offsetTop;
+		var w = cpt.brs.Wth;
+		var h = cpt.brs.Hgt;
 		if (cpt.drg == true) {
-            let f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
-			let x = event.pageX - cpt.id.offsetLeft;
-			let y = event.pageY - cpt.id.offsetTop;
-			let w = cpt.brs.Wth;
-			let h = cpt.brs.Hgt;
 			cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
-			cpt.dat();
+			cpt.dat();            
 		}
+        else {
+            cpt.dat(); 
+            cpt.drafi(f, x, y, w, h);
+        }
 	};
 	cpt.cls = function () {
 		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
@@ -42,37 +46,43 @@ var captainCanvas = function(canvas, tools, settings) {
         }
     };
 	cpt.dat = function () {        
-		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));
-        
+		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));        
 		for (let i = 0; i < cpt.dt.length; i++) {
 			let funky = cpt.dt[i].Fct;
-			if (funky == "fillRect") {
-				cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
-			}
-			else if (funky == "strokeRect") {
-				cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
-			}
-            else if (funky == "rect") {
-                cpt.ct.beginPath();
-                cpt.ct[cpt.dt[i].Fct](cpt.dt[i].X, cpt.dt[i].Y, cpt.dt[i].W, cpt.dt[i].H);
-                cpt.ct.fill();
-                cpt.ct.stroke();              
-            }
-            else if (funky == "arc") {
-                cpt.ct.beginPath();
-                cpt.ct.arc(cpt.dt[i].X,cpt.dt[i].Y,cpt.dt[i].W,0,2*Math.PI);
-                cpt.ct.fill();
-                cpt.ct.stroke();
-            }
-			else if (funky == "fillStyle") {
-				cpt.ct.fillStyle = cpt.dt[i].Val;
-			}
-			else if (funky == "strokeStyle") {
-				cpt.ct.strokeStyle = cpt.dt[i].Val;
-			}
-		}
- 
+            let x = cpt.dt[i].X;
+            let y = cpt.dt[i].Y;
+            let w = cpt.dt[i].W;
+            let h = cpt.dt[i].H;
+            let v = cpt.dt[i].Val;
+            cpt.drafi(funky, x, y, w, h, v);
+		} 
 	};
+    cpt.drafi = function (funky, x, y, w, h, v) {
+    	if (funky == "fillRect") {
+            cpt.ct[funky](x, y, w, h);
+		}
+		else if (funky == "strokeRect") {
+			cpt.ct[funky](x, y, w, h);
+		}
+        else if (funky == "rect") {
+            cpt.ct.beginPath();
+            cpt.ct[funky](x, y, w, h);
+            cpt.ct.fill();
+            cpt.ct.stroke();              
+        }
+        else if (funky == "arc") {
+            cpt.ct.beginPath();
+            cpt.ct[funky](x, y, w, 0,2*Math.PI);
+            cpt.ct.fill();
+            cpt.ct.stroke();
+        }
+		else if (funky == "fillStyle") {
+		    cpt.ct.fillStyle = v;
+		}
+		else if (funky == "strokeStyle") {
+		    cpt.ct.strokeStyle = v;
+		}        		
+    };
 	cpt.ref = function () {
 		cpt.id.setAttribute("width",window.innerWidth);
 		cpt.id.setAttribute("height",window.innerHeight);
@@ -273,6 +283,7 @@ var captainCanvas = function(canvas, tools, settings) {
 			//<span id="toggleBandit"><span>Gem V&aelig;rkt&oslash;jer</span><input id="toolToggler" type="checkbox" /></span>
 		}
 		cpt.id.addEventListener("mousemove", function(event) {
+            cpt.dim();
 			cpt.drw(event);
 		});
 		cpt.id.addEventListener("mousedown", function(event) {            			
