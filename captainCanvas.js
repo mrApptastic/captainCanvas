@@ -18,13 +18,26 @@ var captainCanvas = function(canvas, tools, settings) {
 		var y = event.pageY - cpt.id.offsetTop;
 		var w = cpt.brs.Wth;
 		var h = cpt.brs.Hgt;
+        var s =  0;
+        var e =  2 * Math.PI;
 		if (cpt.drg == true) {
-			cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
+            if (f == "fillRect") {
+                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h}); 
+            }
+            else if (f == "strokeRect") {
+                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
+            }
+            else if (f == "rect") {
+                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
+            }
+            else if (f == "arc") {
+                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "S" : s, "E" : e});                
+            }
 			cpt.dat();            
 		}
         else {
             cpt.dat(); 
-            cpt.drafi(f, x, y, w, h);
+            cpt.drafi(f, x, y, w, h, null, s, e);
         }
 	};
 	cpt.cls = function () {
@@ -54,10 +67,12 @@ var captainCanvas = function(canvas, tools, settings) {
             let w = cpt.dt[i].W;
             let h = cpt.dt[i].H;
             let v = cpt.dt[i].Val;
-            cpt.drafi(funky, x, y, w, h, v);
+            let s = cpt.dt[i].S;
+            let e = cpt.dt[i].E;
+            cpt.drafi(funky, x, y, w, h, v, s, e);
 		} 
 	};
-    cpt.drafi = function (funky, x, y, w, h, v) {
+    cpt.drafi = function (funky, x, y, w, h, v, s, e) {
     	if (funky == "fillRect") {
             cpt.ct[funky](x, y, w, h);
 		}
@@ -68,11 +83,12 @@ var captainCanvas = function(canvas, tools, settings) {
             cpt.ct.beginPath();
             cpt.ct[funky](x, y, w, h);
             cpt.ct.fill();
-            cpt.ct.stroke();              
+            cpt.ct.stroke();
+            cpt.ct.closePath();              
         }
         else if (funky == "arc") {
             cpt.ct.beginPath();
-            cpt.ct[funky](x, y, w, 0,2*Math.PI);
+            cpt.ct[funky](x, y, w, s, e);
             cpt.ct.fill();
             cpt.ct.stroke();
 			cpt.ct.closePath();
