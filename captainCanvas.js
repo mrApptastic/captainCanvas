@@ -22,27 +22,74 @@ var captainCanvas = function(canvas, tools, settings) {
         var e =  2 * Math.PI;
 		if (cpt.drg == true) {
             if (f == "Firkant (Fyld)") {
-                cpt.dt.push({"Fct" : "fillRect", "X" : x, "Y" : y, "W" : w, "H" : h}); 
+                cpt.dt.push({"Fct" : "fillRect", "X" : x, "Y" : y, "Width" : w, "Height" : h}); 
             }
             else if (f == "Firkant (Streg)") {
-                cpt.dt.push({"Fct" : "strokeRect", "X" : x, "Y" : y, "W" : w, "H" : h});
+                cpt.dt.push({"Fct" : "strokeRect", "X" : x, "Y" : y, "Width" : w, "Height" : h});
             }
             else if (f == "Firkant") {
 				cpt.dt.push({"Fct" : "beginPath" });
-                cpt.dt.push({"Fct" : "rect", "X" : x, "Y" : y, "W" : w, "H" : h});
+                cpt.dt.push({"Fct" : "rect", "X" : x, "Y" : y, "Width" : w, "Height" : h});
+				cpt.dt.push({"Fct" : "closePath" });
 				cpt.dt.push({"Fct" : "fill" });
 				cpt.dt.push({"Fct" : "stroke" });
-				cpt.dt.push({"Fct" : "closePath" });
             }
             else if (f == "Cirkel") {
 				cpt.dt.push({"Fct" : "beginPath" });
-                cpt.dt.push({"Fct" : "arc", "X" : x, "Y" : y, "W" : w, "S" : s, "E" : e});      
+                cpt.dt.push({"Fct" : "arc", "X" : x, "Y" : y, "Width" : w, "StartAngle" : s, "EndAngle" : e});      
+				cpt.dt.push({"Fct" : "closePath" });	   
 				cpt.dt.push({"Fct" : "fill" });
-				cpt.dt.push({"Fct" : "stroke" });
-				cpt.dt.push({"Fct" : "closePath" });	         
+				cpt.dt.push({"Fct" : "stroke" });				      
             }
 			else if (f == "Stjerne") {
-				
+				let thisx = x;
+				let thisy  = y;
+				let spikes = 5;
+				let innerRadius = 5;
+				let outerRadius = 15;
+				let rot = Math.PI / (2 * 3);
+				let step = Math.PI / spikes;
+				cpt.dt.push({"Fct" : "beginPath" });
+				cpt.dt.push({"Fct" : "moveTo", "X" : x, "Y" : y - outerRadius});
+				for(let i = 0; i < spikes; i++){
+					thisx = x + Math.cos(rot) * outerRadius;
+					thisy = y + Math.sin(rot) * outerRadius;
+					cpt.dt.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
+					rot += step;
+					thisx= x + Math.cos(rot) * innerRadius;
+					thisy = y + Math.sin(rot) * innerRadius;
+					cpt.dt.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
+					rot += step;
+				}
+				cpt.dt.push({"Fct" : "lineTo", "X" : x, "Y" : y - outerRadius});
+				cpt.dt.push({"Fct" : "closePath" });
+				cpt.dt.push({"Fct" : "fill" });
+				cpt.dt.push({"Fct" : "stroke" });
+/*
+			var rot=Math.PI/2*3;
+			var x= cx;
+			var y= cy;
+			var step=Math.PI/spikes;
+			cpt.ct.beginPath();
+			cpt.ct.moveTo(cx,cy-outerRadius)
+			for(i=0;i<spikes;i++){
+				x=cx+Math.cos(rot)*outerRadius;
+				y=cy+Math.sin(rot)*outerRadius;
+				cpt.ct.lineTo(x,y)
+				rot+=step
+				x=cx+Math.cos(rot)*innerRadius;
+				y=cy+Math.sin(rot)*innerRadius;
+				cpt.ct.lineTo(x,y)
+				rot+=step
+			}
+			cpt.ct.lineTo(cx,cy-outerRadius);
+			cpt.ct.closePath();
+			cpt.ct.lineWidth=5;
+			cpt.ct.strokeStyle='blue';
+			cpt.ct.stroke();
+			cpt.ct.fillStyle='skyblue';
+			cpt.ct.fill();
+*/				
 			}
 			else if (f == "Trekant") {
 				
@@ -57,10 +104,10 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.cls = function () {
 		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
 		cpt.brs.Fil = fill;
-		cpt.dt.push({"Fct" : "fillStyle", "Val" : cpt.brs.Fil});
+		cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
 		var stroke = document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value;
 		cpt.brs.Str = stroke;
-		cpt.dt.push({"Fct" : "strokeStyle", "Val" : cpt.brs.Str});
+		cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
 	};
     cpt.dim = function() {
         var height = document.getElementsByClassName(cpt.tl.id + "_height")[0].value;
@@ -72,17 +119,18 @@ var captainCanvas = function(canvas, tools, settings) {
             cpt.brs.Wth = width;
         }
     };
-	cpt.dat = function () {        
+	cpt.dat = function () {  
 		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));        
 		for (let i = 0; i < cpt.dt.length; i++) {
 			let funky = cpt.dt[i].Fct;
             let x = cpt.dt[i].X;
             let y = cpt.dt[i].Y;
-            let w = cpt.dt[i].W;
-            let h = cpt.dt[i].H;
-            let v = cpt.dt[i].Val;
-            let s = cpt.dt[i].S;
-            let e = cpt.dt[i].E;
+            let w = cpt.dt[i].Width;
+            let h = cpt.dt[i].Height;
+            let v = cpt.dt[i].Value;
+            let s = cpt.dt[i].StartAngle;
+            let e = cpt.dt[i].EndAngle;
+			let a = cpt.dt[i].Angle;
             cpt.drafi(funky, x, y, w, h, v, s, e);
 		} 
 	};
@@ -96,7 +144,7 @@ var captainCanvas = function(canvas, tools, settings) {
 		else if (f == "moveTo" || f == "lineTo" || f == "scale") {
 			cpt.ct[f](x, y);		
 		}
-		else if (f == "fillRect" || f == "strokeRect" || f == "rect") {
+		else if (f == "fillRect" || f == "strokeRect" || f == "rect" || f == "clearRect") {
 			cpt.ct[f](x, y, w, h);
 		}
 		else if (f == "arc") {
@@ -129,7 +177,6 @@ var captainCanvas = function(canvas, tools, settings) {
 		else if (funky == "strokeStyle") {
 		    cpt.ct.strokeStyle = v;
 		}
-		*/
 		this.drawStar = function (cx,cy,spikes,outerRadius,innerRadius) {
 			var rot=Math.PI/2*3;
 			var x= cx;
@@ -155,6 +202,7 @@ var captainCanvas = function(canvas, tools, settings) {
 			cpt.ct.fillStyle='skyblue';
 			cpt.ct.fill();
 		};
+		*/
     };
 	cpt.ref = function () {
 		cpt.id.setAttribute("width",window.innerWidth);
@@ -270,7 +318,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].addEventListener("change",cpt.cls);
                 cpt.tl.appendChild(document.createElement("br"));
                 var selectFilLabel = document.createElement("label");
-				selectFilLabel.innerHTML = "Omkredsfarve: &nbsp;";
+				selectFilLabel.innerHTML = "Stregfarve: &nbsp;";
                 cpt.tl.appendChild(selectFilLabel);
                 var filSelect = document.createElement("select")
                 filSelect.className = cpt.tl.id + "_selectedStroke";
