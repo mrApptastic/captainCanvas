@@ -8,7 +8,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				"fit" : true,
 				"tog" : true
 			  };
-	cpt.fct = ["fillRect","strokeRect", "rect", "arc"];
+	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
 	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent" };
 	cpt.drg = false;
@@ -21,18 +21,32 @@ var captainCanvas = function(canvas, tools, settings) {
         var s =  0;
         var e =  2 * Math.PI;
 		if (cpt.drg == true) {
-            if (f == "fillRect") {
-                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h}); 
+            if (f == "Firkant (Fyld)") {
+                cpt.dt.push({"Fct" : "fillRect", "X" : x, "Y" : y, "W" : w, "H" : h}); 
             }
-            else if (f == "strokeRect") {
-                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
+            else if (f == "Firkant (Streg)") {
+                cpt.dt.push({"Fct" : "strokeRect", "X" : x, "Y" : y, "W" : w, "H" : h});
             }
-            else if (f == "rect") {
-                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "H" : h});
+            else if (f == "Firkant") {
+				cpt.dt.push({"Fct" : "beginPath" });
+                cpt.dt.push({"Fct" : "rect", "X" : x, "Y" : y, "W" : w, "H" : h});
+				cpt.dt.push({"Fct" : "fill" });
+				cpt.dt.push({"Fct" : "stroke" });
+				cpt.dt.push({"Fct" : "closePath" });
             }
-            else if (f == "arc") {
-                cpt.dt.push({"Fct" : f, "X" : x, "Y" : y, "W" : w, "S" : s, "E" : e});                
+            else if (f == "Cirkel") {
+				cpt.dt.push({"Fct" : "beginPath" });
+                cpt.dt.push({"Fct" : "arc", "X" : x, "Y" : y, "W" : w, "S" : s, "E" : e});      
+				cpt.dt.push({"Fct" : "fill" });
+				cpt.dt.push({"Fct" : "stroke" });
+				cpt.dt.push({"Fct" : "closePath" });	         
             }
+			else if (f == "Stjerne") {
+				
+			}
+			else if (f == "Trekant") {
+				
+			}
 			cpt.dat();            
 		}
         else {
@@ -72,7 +86,23 @@ var captainCanvas = function(canvas, tools, settings) {
             cpt.drafi(funky, x, y, w, h, v, s, e);
 		} 
 	};
-    cpt.drafi = function (funky, x, y, w, h, v, s, e) {
+    cpt.drafi = function (f, x, y, w, h, v, s, e) {
+		if (f == "strokeStyle" || f == "fillStyle" || f == "shadowOffsetX" || f == "shadowOffsetY" || f == "shadowBlur" || f == "shadowColor" || f == "font" || f == "textAlign" || f == "textBaseline" || f == "globalAlpha" || f == "globalCompositeOperation" || f == "lineWidth" || f == "lineCap" || f == "lineJoin" || f == "miterLimit") {
+			cpt.ct[f] = v;
+		}
+		else if (f == "save" || f == "restore" || f == "beginPath" || f == "closePath" || f == "fill" || f == "stroke" || f == "clip") {
+			cpt.ct[f]();	
+		}
+		else if (f == "moveTo" || f == "lineTo" || f == "scale") {
+			cpt.ct[f](x, y);		
+		}
+		else if (f == "fillRect" || f == "strokeRect" || f == "rect") {
+			cpt.ct[f](x, y, w, h);
+		}
+		else if (f == "arc") {
+			cpt.ct[f](x, y, w, s, e);
+		}
+			/*
     	if (funky == "fillRect") {
             cpt.ct[funky](x, y, w, h);
 		}
@@ -99,6 +129,7 @@ var captainCanvas = function(canvas, tools, settings) {
 		else if (funky == "strokeStyle") {
 		    cpt.ct.strokeStyle = v;
 		}
+		*/
 		this.drawStar = function (cx,cy,spikes,outerRadius,innerRadius) {
 			var rot=Math.PI/2*3;
 			var x= cx;
@@ -198,9 +229,10 @@ var captainCanvas = function(canvas, tools, settings) {
 				selectFuncLabel.innerHTML = "Funktion: &nbsp;";
 				cpt.tl.appendChild(selectFuncLabel);				
 				cpt.tl.appendChild(document.createElement("select"));
-				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";				
-				for (let i = 0; i < cpt.fct.length; i++) {
-					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + cpt.fct[i] + "'>" + cpt.fct[i] + "</option>";
+				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";
+				var funky = cpt.fct.sort();
+				for (let i = 0; i < funky.length; i++) {
+					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + funky[i] + "'>" + funky[i] + "</option>";
 				}
                 cpt.tl.appendChild(document.createElement("br"));
             /* Selected Height And Width */
