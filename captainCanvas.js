@@ -301,7 +301,33 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.down((fil ? fil : "captainCanvas") + ".svg", "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
 	};
     cpt.whtm = function (fil) {
+        var name = (fil ? fil : "captainCanvas");
+        var html = "<html><head><title>" 
+        /*
+        + name 
+        + "</title></head><body><canvas id='" 
+        + name 
+        + "'></canvas><script>"
+        + "var "
+        + name
+        + " = document.getElementById('"
+        + name
+        "').getContext('2d');"
         
+        for (let i = 0; i < cpt.dt.length; i++) 
+            if (!cpt.dt[i].Value) {
+                html += name + "." + cpt.dt[i].Fct
+                for (j in cpt.dt[i]) {
+                    
+                }
+            }
+            else {
+                html += name + "." + cpt.dt[i].Fct + " = '" + cpt.dt[i].Value + "';"
+            }
+        } 
+        */
+        html += "</script></body></html>";
+        cpt.down(name  + ".html", "data:text/html;charset=utf-8," + encodeURIComponent(html));
     };
 	cpt.wpng = function (fil) {
 		cpt.down((fil ? fil : "captainCanvas")  + ".png", "data:image/png;base64;" + cpt.id.toDataURL());
@@ -431,6 +457,15 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tl.appendChild(exportSVG);
 				document.getElementsByClassName(cpt.tl.id + "_exportSVG")[0].addEventListener("click", function() {
 					cpt.wsvg(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
+				});
+            /* Export SVG */
+				var exportHtml = document.createElement("input");
+				exportHtml.value = "Gem HTML";
+				exportHtml.setAttribute("type", "button");
+				exportHtml.className = cpt.tl.id + "_exportHtml";
+				cpt.tl.appendChild(exportHtml);
+				document.getElementsByClassName(cpt.tl.id + "_exportHtml")[0].addEventListener("click", function() {
+					cpt.whtm(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
 				});
 			/* Export PNG */
 				var exportPNG = document.createElement("input");
