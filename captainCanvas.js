@@ -13,58 +13,86 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent" };
 	cpt.drg = false;
 	cpt.drw = function(event) {
+        var z = [];
         var f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
 		var x = event.pageX - cpt.id.offsetLeft;
 		var y = event.pageY - cpt.id.offsetTop;
-		var w = cpt.brs.Wth;
-		var h = cpt.brs.Hgt;
+		var w = parseInt(cpt.brs.Wth);
+		var h = parseInt(cpt.brs.Hgt);
         var s =  0;
         var e =  2 * Math.PI;
-		if (cpt.drg == true) {
-            if (f == "Firkant (Fyld)") {
-                cpt.dt.push({"Fct" : "fillRect", "X" : x, "Y" : y, "Width" : w, "Height" : h}); 
+        if (f == "Firkant (Fyld)") {
+            z.push({"Fct" : "fillRect", "X" : x, "Y" : y, "Width" : w, "Height" : h}); 
+        }
+        else if (f == "Firkant (Streg)") {
+            z.push({"Fct" : "strokeRect", "X" : x, "Y" : y, "Width" : w, "Height" : h});
+        }
+        else if (f == "Firkant") {
+		    z.push({"Fct" : "beginPath" });
+            z.push({"Fct" : "rect", "X" : x, "Y" : y, "Width" : w, "Height" : h});
+		    z.push({"Fct" : "closePath" });
+		    z.push({"Fct" : "fill" });
+		    z.push({"Fct" : "stroke" });
+        }
+        else if (f == "Cirkel") {
+		    z.push({"Fct" : "beginPath" });
+            z.push({"Fct" : "arc", "X" : x, "Y" : y, "Width" : w, "StartAngle" : s, "EndAngle" : e});      
+		    z.push({"Fct" : "closePath" });	   
+		    z.push({"Fct" : "fill" });
+		    z.push({"Fct" : "stroke" });				      
+        }
+		else if (f == "Stjerne") {
+		    let thisx = x;
+			let thisy  = y;
+			let spikes = 5;
+			let innerRadius = w;
+			let outerRadius = h;
+			let rot = Math.PI / (2 * 3);
+			let step = Math.PI / spikes;
+			z.push({"Fct" : "beginPath" });
+			z.push({"Fct" : "moveTo", "X" : x, "Y" : y - outerRadius});
+			for(let i = 0; i < spikes; i++){
+			    thisx = x + Math.cos(rot) * outerRadius;
+				thisy = y + Math.sin(rot) * outerRadius;
+				z.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
+				rot += step;
+				thisx= x + Math.cos(rot) * innerRadius;
+				thisy = y + Math.sin(rot) * innerRadius;
+				z.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
+				rot += step;
+			}
+			z.push({"Fct" : "lineTo", "X" : x, "Y" : y - outerRadius});
+			z.push({"Fct" : "closePath" });
+			z.push({"Fct" : "fill" });
+			z.push({"Fct" : "stroke" });
+        }
+        else if (f == "Trekant") {
+		    z.push({"Fct" : "beginPath" });
+            z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+            z.push({"Fct" : "lineTo", "X" : (x + w), "Y" : y }); 
+            z.push({"Fct" : "lineTo", "X" : (x + w/2), "Y" : (y + h) });      
+		    z.push({"Fct" : "closePath" });	   
+		    z.push({"Fct" : "fill" });
+		    z.push({"Fct" : "stroke" });	
+		}
+
+        if (cpt.drg) {
+            cpt.dt = cpt.dt.concat(z);
+            /*
+            for (let i = 0; i < z.length; i++) {                
+                cpt.dt.push(z[i]);
             }
-            else if (f == "Firkant (Streg)") {
-                cpt.dt.push({"Fct" : "strokeRect", "X" : x, "Y" : y, "Width" : w, "Height" : h});
+            */
+        }
+
+		cpt.dat();  
+
+		if (!cpt.drg) {
+            for (let i = 0; i < z.length; i++) {                
+                cpt.drafi(z[i].Fct, z[i].X, z[i].Y, z[i].Width, z[i].Height, z[i].Value, z[i].StartAngle, z[i].EndAngle);
             }
-            else if (f == "Firkant") {
-				cpt.dt.push({"Fct" : "beginPath" });
-                cpt.dt.push({"Fct" : "rect", "X" : x, "Y" : y, "Width" : w, "Height" : h});
-				cpt.dt.push({"Fct" : "closePath" });
-				cpt.dt.push({"Fct" : "fill" });
-				cpt.dt.push({"Fct" : "stroke" });
-            }
-            else if (f == "Cirkel") {
-				cpt.dt.push({"Fct" : "beginPath" });
-                cpt.dt.push({"Fct" : "arc", "X" : x, "Y" : y, "Width" : w, "StartAngle" : s, "EndAngle" : e});      
-				cpt.dt.push({"Fct" : "closePath" });	   
-				cpt.dt.push({"Fct" : "fill" });
-				cpt.dt.push({"Fct" : "stroke" });				      
-            }
-			else if (f == "Stjerne") {
-				let thisx = x;
-				let thisy  = y;
-				let spikes = 5;
-				let innerRadius = 5;
-				let outerRadius = 15;
-				let rot = Math.PI / (2 * 3);
-				let step = Math.PI / spikes;
-				cpt.dt.push({"Fct" : "beginPath" });
-				cpt.dt.push({"Fct" : "moveTo", "X" : x, "Y" : y - outerRadius});
-				for(let i = 0; i < spikes; i++){
-					thisx = x + Math.cos(rot) * outerRadius;
-					thisy = y + Math.sin(rot) * outerRadius;
-					cpt.dt.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
-					rot += step;
-					thisx= x + Math.cos(rot) * innerRadius;
-					thisy = y + Math.sin(rot) * innerRadius;
-					cpt.dt.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
-					rot += step;
-				}
-				cpt.dt.push({"Fct" : "lineTo", "X" : x, "Y" : y - outerRadius});
-				cpt.dt.push({"Fct" : "closePath" });
-				cpt.dt.push({"Fct" : "fill" });
-				cpt.dt.push({"Fct" : "stroke" });
+        }
+            
 /*
 			var rot=Math.PI/2*3;
 			var x= cx;
@@ -89,17 +117,15 @@ var captainCanvas = function(canvas, tools, settings) {
 			cpt.ct.stroke();
 			cpt.ct.fillStyle='skyblue';
 			cpt.ct.fill();
-*/				
-			}
-			else if (f == "Trekant") {
 				
-			}
-			cpt.dat();            
+			
+          
 		}
         else {
             cpt.dat(); 
             cpt.drafi(f, x, y, w, h, null, s, e);
         }
+        */
 	};
 	cpt.cls = function () {
 		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
@@ -131,25 +157,52 @@ var captainCanvas = function(canvas, tools, settings) {
             let s = cpt.dt[i].StartAngle;
             let e = cpt.dt[i].EndAngle;
 			let a = cpt.dt[i].Angle;
-            cpt.drafi(funky, x, y, w, h, v, s, e);
+            cpt.drafi(funky, x, y, w, h, v, s, e, a);
 		} 
 	};
-    cpt.drafi = function (f, x, y, w, h, v, s, e) {
+    cpt.drafi = function (f, x, y, w, h, v, s, e, a) {
 		if (f == "strokeStyle" || f == "fillStyle" || f == "shadowOffsetX" || f == "shadowOffsetY" || f == "shadowBlur" || f == "shadowColor" || f == "font" || f == "textAlign" || f == "textBaseline" || f == "globalAlpha" || f == "globalCompositeOperation" || f == "lineWidth" || f == "lineCap" || f == "lineJoin" || f == "miterLimit") {
 			cpt.ct[f] = v;
 		}
 		else if (f == "save" || f == "restore" || f == "beginPath" || f == "closePath" || f == "fill" || f == "stroke" || f == "clip") {
 			cpt.ct[f]();	
 		}
-		else if (f == "moveTo" || f == "lineTo" || f == "scale") {
+        else if (f == "rotate") {
+            cpt.ct[f](a);
+        }
+		else if (f == "moveTo" || f == "lineTo" || f == "scale" || f == "translate") {
 			cpt.ct[f](x, y);		
 		}
+        else if (f == "addColorStop") {
+            
+        }
 		else if (f == "fillRect" || f == "strokeRect" || f == "rect" || f == "clearRect") {
 			cpt.ct[f](x, y, w, h);
 		}
+        else if (f == "fillText" || f == "strokeText") {
+            
+        }
 		else if (f == "arc") {
 			cpt.ct[f](x, y, w, s, e);
 		}
+        else if (f == "arcTo") {
+            
+        }
+        else if (f == "quadraticCurveTo") {
+            
+        } 
+        else if (f == "bezierCurveTo") {
+            
+        }   
+        else if (f == "drawImage") {
+            
+        }
+        else if (f == "putImageData") {
+            
+        }
+        else if (f == "transform" || f == "setTransform") {
+            
+        }
 			/*
     	if (funky == "fillRect") {
             cpt.ct[funky](x, y, w, h);
@@ -247,6 +300,9 @@ var captainCanvas = function(canvas, tools, settings) {
 		var svg = firstLine + dataLines + lastLine;
 		cpt.down((fil ? fil : "captainCanvas") + ".svg", "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg));
 	};
+    cpt.whtm = function (fil) {
+        
+    };
 	cpt.wpng = function (fil) {
 		cpt.down((fil ? fil : "captainCanvas")  + ".png", "data:image/png;base64;" + cpt.id.toDataURL());
 	};
