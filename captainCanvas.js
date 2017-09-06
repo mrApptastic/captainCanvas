@@ -153,14 +153,21 @@ var captainCanvas = function(canvas, tools, settings) {
             let y = cpt.dt[i].Y;
             let w = cpt.dt[i].Width;
             let h = cpt.dt[i].Height;
-            let v = cpt.dt[i].Value;
+            let v = cpt.dt[i].Value;			
             let s = cpt.dt[i].StartAngle;
             let e = cpt.dt[i].EndAngle;
 			let a = cpt.dt[i].Angle;
-            cpt.drafi(funky, x, y, w, h, v, s, e, a);
+			let c = cpt.dt[i].Colour;
+			let o = cpt.dt[i].Offset;
+			let t = cpt.dt[i].Text;
+			let m = cpt.dt[i].MaxWidth;
+			let r = cpt.dt[i].Radius;
+            let x2 = cpt.dt[i].X2;
+            let y2 = cpt.dt[i].Y2;			
+            cpt.drafi(funky, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2);
 		} 
 	};
-    cpt.drafi = function (f, x, y, w, h, v, s, e, a) {
+    cpt.drafi = function (f, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2) {
 		if (f == "strokeStyle" || f == "fillStyle" || f == "shadowOffsetX" || f == "shadowOffsetY" || f == "shadowBlur" || f == "shadowColor" || f == "font" || f == "textAlign" || f == "textBaseline" || f == "globalAlpha" || f == "globalCompositeOperation" || f == "lineWidth" || f == "lineCap" || f == "lineJoin" || f == "miterLimit") {
 			cpt.ct[f] = v;
 		}
@@ -174,19 +181,19 @@ var captainCanvas = function(canvas, tools, settings) {
 			cpt.ct[f](x, y);		
 		}
         else if (f == "addColorStop") {
-            
+ 			cpt.ct[f](o, c);           
         }
 		else if (f == "fillRect" || f == "strokeRect" || f == "rect" || f == "clearRect") {
 			cpt.ct[f](x, y, w, h);
 		}
         else if (f == "fillText" || f == "strokeText") {
-            
+ 			cpt.ct[f](t, x, y, m); 			
         }
 		else if (f == "arc") {
 			cpt.ct[f](x, y, w, s, e);
 		}
         else if (f == "arcTo") {
-            
+    		cpt.ct[f](x, y, x2, y2, r);        
         }
         else if (f == "quadraticCurveTo") {
             
@@ -302,18 +309,59 @@ var captainCanvas = function(canvas, tools, settings) {
 	};
     cpt.whtm = function (fil) {
         var name = (fil ? fil : "captainCanvas");
-        var html = "<html><head><title>" 
+        var html = '<!doctype html>\r\n<html>\r\n<head>\r\n<title>'         
+        + name 
+        + '</title>\r\n</head>\r\n<body>\r\n<canvas id="' 
+        + name 
+        + '" width="' 
+        + cpt.id.getAttribute("width") 
+        + '" height="' 
+        + cpt.id.getAttribute("height")  
+        + '"></canvas>\r\n<script>\r\n'		
+        + 'var '
+        + name
+        + ' = document.getElementById("'
+        + name
+        + '").getContext("2d");\r\n';
+		
+		for (let i = 0; i < cpt.dt.length; i++) {	
+			let p = cpt.dt[i];
+			let isAtr = false;
+			let add = name + '.' + p.Fct + "(";
+			for (let j in p) {				
+				if (p.hasOwnProperty(j)) {
+					if (j != "Fct") {
+						if (j == "Value") {
+							add = name + "." + p.Fct + " = '" + p[j] + "';\r\n";
+							isAtr = true;
+							break;
+						}
+						else {
+							add += p[j] + ',';
+						}
+					}
+					/*
+					Fct -> fillStyle
+					Value -> Black
+					Fct -> strokeStyle
+					Value -> Transparent
+					if (j == "Value") {
+							html += name + "." + p.Fct + " = '" + p.Value + "';"
+					}
+					*/
+					//console.log(j + " -> " + p[j]);
+				}				
+			}
+			if (!isAtr) {
+				if (add.indexOf(',') != -1) {
+					add = add.slice(0,-1);
+				}
+				add += ');\r\n'
+			}
+			html += add;			
+		}
+		
         /*
-        + name 
-        + "</title></head><body><canvas id='" 
-        + name 
-        + "'></canvas><script>"
-        + "var "
-        + name
-        + " = document.getElementById('"
-        + name
-        "').getContext('2d');"
-        
         for (let i = 0; i < cpt.dt.length; i++) 
             if (!cpt.dt[i].Value) {
                 html += name + "." + cpt.dt[i].Fct
@@ -326,7 +374,7 @@ var captainCanvas = function(canvas, tools, settings) {
             }
         } 
         */
-        html += "</script></body></html>";
+        html += '</script>\r\n</body>\r\n</html>';
         cpt.down(name  + ".html", "data:text/html;charset=utf-8," + encodeURIComponent(html));
     };
 	cpt.wpng = function (fil) {
