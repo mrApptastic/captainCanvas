@@ -96,10 +96,10 @@ var captainCanvas = function(canvas, tools, settings) {
         }
         else if (f == "Trapezoid") {
             z.push({"Fct" : "beginPath" });
-            z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+            z.push({"Fct" : "moveTo", "X" : x + (w / 5), "Y" : y });
             z.push({"Fct" : "lineTo", "X" : (x + w) - (w / 5), "Y" : y }); 
             z.push({"Fct" : "lineTo", "X" : (x + w), "Y" : (y + h) });
-            z.push({"Fct" : "lineTo", "X" : x + (w / 5), "Y" : (y + h) });       
+            z.push({"Fct" : "lineTo", "X" : x, "Y" : (y + h) });         
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });  
@@ -121,32 +121,38 @@ var captainCanvas = function(canvas, tools, settings) {
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });    
-            /*
-              var kappa = .5522848,
-      ox = (w / 2) * kappa, // control point offset horizontal
-      oy = (h / 2) * kappa, // control point offset vertical
-      xe = x + w,           // x-end
-      ye = y + h,           // y-end
-      xm = x + w / 2,       // x-middle
-      ym = y + h / 2;       // y-middle
-
-  ctx.beginPath();
-  ctx.moveTo(x, ym);
-  ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-  ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-  ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-  ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
-  ctx.closePath(); 
-  ctx.stroke();
-
-  */
         }
 		else if (f == "Smiley") {
+            z.push({"Fct" : "beginPath" });
+            z.push({"Fct" : "arc", "X" : x, "Y" : y, "Width" : w, "StartAngle" : s, "EndAngle" : e, "Anticlockwise" : true });
+            z.push({"Fct" : "moveTo", "X" : (x + w - (w * 3 / 10)), "Y" : y });
+            z.push({"Fct" : "arc", "X" : x, "Y" : y, "Width" : (w / 2) + (w / 5), "StartAngle" : s, "EndAngle" : Math.PI, "Anticlockwise" : false });      
+            z.push({"Fct" : "moveTo", "X" : x - (w / 5), "Y" : y - (w / 5) });
+            z.push({"Fct" : "arc", "X" : x - (w * 3 / 10), "Y" :  y - (w / 5), "Width" : (w / 10), "StartAngle" : s, "EndAngle" : e, "Anticlockwise" : true });
+            z.push({"Fct" : "moveTo", "X" : x + (w * 2 / 5), "Y" : (y - (w / 5)) });
+            z.push({"Fct" : "arc", "X" : x + (w * 3 / 10), "Y" : y - (w / 5), "Width" : (w / 10), "StartAngle" : s, "EndAngle" : e, "Anticlockwise" : true });      
+		    z.push({"Fct" : "closePath" });	   
+		    z.push({"Fct" : "fill" });
+		    z.push({"Fct" : "stroke" });				      
+
 			/*
-			function draw() {
-  var canvas = document.getElementById('canvas');
-  if (canvas.getContext) {
-     var ctx = canvas.getContext('2d');
+var x = 55;
+var y = 65;
+var w = 20;
+
+var c = document.getElementById("myCanvas");
+     var ctx = c.getContext('2d');
+
+                ctx.beginPath();
+    ctx.arc(x, y, w, 0, Math.PI * 2, true);
+	ctx.moveTo(x + w - (w * 3 / 10), y);
+    ctx.arc(x, y, (w / 2) + (w / 5), 0, Math.PI, false);
+    ctx.moveTo(x - (w / 5), y - (w / 5));
+    ctx.arc(x - (w * 3 / 10), y - (w / 5), (w / 10), 0, Math.PI * 2, true);
+    ctx.moveTo(x + (w * 2 / 5), (y - (w / 5)));
+    ctx.arc(x + (w * 3 / 10), y - (w / 5), (w / 10), 0, Math.PI * 2, true);
+
+    ctx.stroke();
 
     ctx.beginPath();
     ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
@@ -161,8 +167,44 @@ var captainCanvas = function(canvas, tools, settings) {
 }
 			*/
 		}
-		else if (f == "Heart") {
+		else if (f == "Hjerte") {
+            let d = Math.min(w, w);
+            z.push({"Fct" : "beginPath" });
+            z.push({"Fct" : "moveTo", "X" : x, "Y" : y + d / 4 });
+			z.push({"Fct" : "quadraticCurveTo", "Cpx" : x, "Cpy" : y, "X" : x + d / 4 , "Y" : y });
+            z.push({"Fct" : "quadraticCurveTo", "Cpx" : x + d / 2, "Cpy" : y, "X" : x + d / 2, "Y" : y + d / 4 });
+            z.push({"Fct" : "quadraticCurveTo", "Cpx" : x + d / 2, "Cpy" : y, "X" : x + d * 3/4, "Y" : y });
+            z.push({"Fct" : "quadraticCurveTo", "Cpx" : x + d, "Cpy" : y, "X" : x + d, "Y" : y + d / 4 });
+            z.push({"Fct" : "quadraticCurveTo", "Cpx" : x + d, "Cpy" : y + d / 2, "X" :x + d * 3/4, "Y" :  y + d * 3/4 });
+            z.push({"Fct" : "lineTo", "X" : x + d / 2, "Y" : y + d });
+            z.push({"Fct" : "lineTo", "X" : x + d / 4, "Y" : y + d * 3/4 });
+            z.push({"Fct" : "quadraticCurveTo", "Cpx" : x, "Cpy" : y + d / 2, "X" : x, "Y" :  y + d / 4 });
+		    z.push({"Fct" : "closePath" });	   
+		    z.push({"Fct" : "fill" });
+		    z.push({"Fct" : "stroke" });   
 			/*
+
+                canvas = document.getElementById("myCanvas");
+    var context = canvas.getContext("2d");
+
+    var w = 55;
+    var x = 88;
+    var y = 55;
+    context.strokeStyle = "#000000";
+    context.lineWidth = 3;
+    context.fillStyle = "#FF0000";
+    var d = Math.min(w, w);    
+    context.moveTo(x, y + d / 4);
+    context.quadraticCurveTo(x, y, x + d / 4, y);
+    context.quadraticCurveTo(x + d / 2, y, x + d / 2, y + d / 4);
+    context.quadraticCurveTo(x + d / 2, y, x + d * 3/4, y);
+    context.quadraticCurveTo(x + d, y, x + d, y + d / 4);
+    context.quadraticCurveTo(x + d, y + d / 2, x + d * 3/4, y + d * 3/4);
+    context.lineTo(x + d / 2, y + d);
+    context.lineTo(x + d / 4, y + d * 3/4);
+    context.quadraticCurveTo(x, y + d / 2, x, y + d / 4);
+    context.stroke();
+    context.fill();
 			    ctx.beginPath();
     ctx.moveTo(75, 40);
     ctx.bezierCurveTo(75, 37, 70, 25, 50, 25);
