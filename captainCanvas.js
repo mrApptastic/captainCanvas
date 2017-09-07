@@ -8,7 +8,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				"fit" : true,
 				"tog" : true
 			  };
-	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse"];
+	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
 	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent" };
 	cpt.drg = false;
@@ -87,15 +87,22 @@ var captainCanvas = function(canvas, tools, settings) {
         else if (f == "Rhombe") {
   		    z.push({"Fct" : "beginPath" });
             z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-            z.push({"Fct" : "lineTo", "X" : (x + w) - w/5, "Y" : y }); 
+            z.push({"Fct" : "lineTo", "X" : (x + w) - (w / 5), "Y" : y }); 
             z.push({"Fct" : "lineTo", "X" : (x + w), "Y" : (y + h) });
-            z.push({"Fct" : "lineTo", "X" : x + w/5, "Y" : (y + h) });       
+            z.push({"Fct" : "lineTo", "X" : x + (w / 5), "Y" : (y + h) });       
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });          
         }
         else if (f == "Trapezoid") {
-            
+            z.push({"Fct" : "beginPath" });
+            z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+            z.push({"Fct" : "lineTo", "X" : (x + w) - (w / 5), "Y" : y }); 
+            z.push({"Fct" : "lineTo", "X" : (x + w), "Y" : (y + h) });
+            z.push({"Fct" : "lineTo", "X" : x + (w / 5), "Y" : (y + h) });       
+		    z.push({"Fct" : "closePath" });	   
+		    z.push({"Fct" : "fill" });
+		    z.push({"Fct" : "stroke" });  
         }
         else if (f == "Ellipse") {
             let kappa = .5522848;
@@ -106,13 +113,11 @@ var captainCanvas = function(canvas, tools, settings) {
             let xm = x + w / 2;
             let ym = y + h / 2; 
             z.push({"Fct" : "beginPath" });
-            z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-            /*
-  ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-  ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-  ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-  ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);  
-  */    
+            z.push({"Fct" : "moveTo", "X" : x, "Y" : ym });
+			z.push({"Fct" : "bezierCurveTo", "Cpx" : x, "Cpy" : ym - oy, "Cpx2" : xm - ox, "Cpy2" : y, "X" : xm, "Y" : y });
+			z.push({"Fct" : "bezierCurveTo", "Cpx" : xm + ox, "Cpy" : y, "Cpx2" : xe, "Cpy2" : ym - oy, "X" : xe, "Y" : ym });
+			z.push({"Fct" : "bezierCurveTo", "Cpx" : xe, "Cpy" : ym + oy, "Cpx2" : xm + ox, "Cpy2" : ye, "X" : xm, "Y" : ye });
+			z.push({"Fct" : "bezierCurveTo", "Cpx" : xm - ox, "Cpy" : ye, "Cpx2" : x, "Cpy2" : ym + oy, "X" : x, "Y" : ym }); 
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });    
@@ -136,6 +141,39 @@ var captainCanvas = function(canvas, tools, settings) {
 
   */
         }
+		else if (f == "Smiley") {
+			/*
+			function draw() {
+  var canvas = document.getElementById('canvas');
+  if (canvas.getContext) {
+     var ctx = canvas.getContext('2d');
+
+    ctx.beginPath();
+    ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
+    ctx.moveTo(110, 75);
+    ctx.arc(75, 75, 35, 0, Math.PI, false);  // Mouth (clockwise)
+    ctx.moveTo(65, 65);
+    ctx.arc(60, 65, 5, 0, Math.PI * 2, true);  // Left eye
+    ctx.moveTo(95, 65);
+    ctx.arc(90, 65, 5, 0, Math.PI * 2, true);  // Right eye
+    ctx.stroke();
+  }
+}
+			*/
+		}
+		else if (f == "Heart") {
+			/*
+			    ctx.beginPath();
+    ctx.moveTo(75, 40);
+    ctx.bezierCurveTo(75, 37, 70, 25, 50, 25);
+    ctx.bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
+    ctx.bezierCurveTo(20, 80, 40, 102, 75, 120);
+    ctx.bezierCurveTo(110, 102, 130, 80, 130, 62.5);
+    ctx.bezierCurveTo(130, 62.5, 130, 25, 100, 25);
+    ctx.bezierCurveTo(85, 25, 75, 37, 75, 40);
+    ctx.fill();
+			*/
+		}
 
         if (cpt.drg) {
             cpt.dt = cpt.dt.concat(z);
@@ -145,21 +183,57 @@ var captainCanvas = function(canvas, tools, settings) {
 
 		if (!cpt.drg) {
             for (let i = 0; i < z.length; i++) {                
-                cpt.drafi(z[i].Fct, z[i].X, z[i].Y, z[i].Width, z[i].Height, z[i].Value, z[i].StartAngle, z[i].EndAngle);
+                cpt.drafi(z[i].Fct, 
+					z[i].X, 
+					z[i].Y, 
+					z[i].Width, 
+					z[i].Height, 
+					z[i].Value, 
+					z[i].StartAngle, 
+					z[i].EndAngle, 
+					z[i].Angle, 
+					z[i].Colour, 
+					z[i].Offset, 
+					z[i].Text, 
+					z[i].MaxWidth, 
+					z[i].Radius, 
+					z[i].X2, 
+					z[i].Y2, 
+					z[i].Cpx, 
+					z[i].Cpy, 
+					z[i].Cpx2, 
+					z[i].Cpy2,
+					z[i].RadiusY,
+					z[i].Rotation,
+					z[i].Anticlockwise
+				);
             }
         }
 	};
-	cpt.cls = function () {
+	cpt.cfl = function() {
 		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
 		cpt.brs.Fil = fill;
 		cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+	};
+	cpt.cst = function() {
 		var stroke = document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value;
 		cpt.brs.Str = stroke;
 		cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
 	};
+	cpt.clw = function() {
+		var lineWidth = document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value;
+		if (!isNaN(lineWidth)) {
+			cpt.dt.push({"Fct" : "lineWidth", "Value" : lineWidth});
+        }
+	};
+	cpt.cls = function () {
+		cpt.cfl();
+		cpt.cst();
+		cpt.clw();	
+	};
     cpt.dim = function() {
         var height = document.getElementsByClassName(cpt.tl.id + "_height")[0].value;
-        var width =  document.getElementsByClassName(cpt.tl.id + "_width")[0].value;
+        var width =  document.getElementsByClassName(cpt.tl.id + "_width")[0].value;		
         if (!isNaN(height)) {
             cpt.brs.Hgt = height;
         }
@@ -170,6 +244,7 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.dat = function () {  
 		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));        
 		for (let i = 0; i < cpt.dt.length; i++) {
+			/*
 			let funky = cpt.dt[i].Fct;
             let x = cpt.dt[i].X;
             let y = cpt.dt[i].Y;
@@ -185,11 +260,43 @@ var captainCanvas = function(canvas, tools, settings) {
 			let m = cpt.dt[i].MaxWidth;
 			let r = cpt.dt[i].Radius;
             let x2 = cpt.dt[i].X2;
-            let y2 = cpt.dt[i].Y2;			
-            cpt.drafi(funky, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2);
+            let y2 = cpt.dt[i].Y2;
+			let cx = cpt.dt[i].Cpx;
+			let cy = cpt.dt[i].Cpy;
+			let cx2 = cpt.dt[i].Cpx2;
+			let cy2 = cpt.dt[i].Cpy2;
+			let ry = cpt.dt[i].RadiusY;
+			let aw = cpt.dt[i].Anticlockwise;
+            cpt.drafi(funky, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2, cx, cy, cx2, cy2, ry, aw);
+			*/
+			cpt.drafi(
+				cpt.dt[i].Fct, 
+				cpt.dt[i].X, 
+				cpt.dt[i].Y, 
+				cpt.dt[i].Width, 
+				cpt.dt[i].Height, 
+				cpt.dt[i].Value, 
+				cpt.dt[i].StartAngle, 
+				cpt.dt[i].EndAngle, 
+				cpt.dt[i].Angle, 
+				cpt.dt[i].Colour, 
+				cpt.dt[i].Offset, 
+				cpt.dt[i].Text, 
+				cpt.dt[i].MaxWidth, 
+				cpt.dt[i].Radius, 
+				cpt.dt[i].X2, 
+				cpt.dt[i].Y2, 
+				cpt.dt[i].Cpx, 
+				cpt.dt[i].Cpy, 
+				cpt.dt[i].Cpx2, 
+				cpt.dt[i].Cpy2,
+				cpt.dt[i].RadiusY,
+				cpt.dt[i].Rotation,
+				cpt.dt[i].Anticlockwise
+			);
 		} 
 	};
-    cpt.drafi = function (f, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2) {
+    cpt.drafi = function (f, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2, cx, cy, cx2, cy2, ry, rt, aw) {
 		if (f == "strokeStyle" || f == "fillStyle" || f == "shadowOffsetX" || f == "shadowOffsetY" || f == "shadowBlur" || f == "shadowColor" || f == "font" || f == "textAlign" || f == "textBaseline" || f == "globalAlpha" || f == "globalCompositeOperation" || f == "lineWidth" || f == "lineCap" || f == "lineJoin" || f == "miterLimit") {
 			cpt.ct[f] = v;
 		}
@@ -212,16 +319,19 @@ var captainCanvas = function(canvas, tools, settings) {
  			cpt.ct[f](t, x, y, m); 			
         }
 		else if (f == "arc") {
-			cpt.ct[f](x, y, w, s, e);
+			cpt.ct[f](x, y, w, s, e, aw);
 		}
         else if (f == "arcTo") {
     		cpt.ct[f](x, y, x2, y2, r);        
         }
+		else if (f == "ellipse") {
+    		cpt.ct[f](x, y, r, ry, rt, s, e, aw);        
+        }
         else if (f == "quadraticCurveTo") {
-            
+       		cpt.ct[f](cx, cy, x, y);          
         } 
         else if (f == "bezierCurveTo") {
-            
+			cpt.ct[f](cx, cy, cx2, cy2, x, y);             
         }   
         else if (f == "drawImage") {
             
@@ -347,7 +457,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.getElementsByTagName("h1")[0].innerHTML = "V&aelig;rkt&oslash;jer:";
 			/* Brush Heading */
 				var brush = document.createElement("h3");
-				brush.innerHTML = "Pensel:"
+				brush.innerHTML = "Pensel :"
 				cpt.tl.appendChild(brush);
 			/* Selected Function */
             	var selectFuncLabel = document.createElement("label");
@@ -360,9 +470,9 @@ var captainCanvas = function(canvas, tools, settings) {
 					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + funky[i] + "'>" + funky[i] + "</option>";
 				}
                 cpt.tl.appendChild(document.createElement("br"));
-            /* Selected Height And Width */
+            /* Selected Height, Width And Linewidth */
             	var heightLabel = document.createElement("label");
-				heightLabel.innerHTML = "H&oslash;jde: &nbsp;";
+				heightLabel.innerHTML = "H&oslash;jde : &nbsp;";
 				cpt.tl.appendChild(heightLabel);
                 var height = document.createElement("input");
 				height.value = "20";
@@ -372,7 +482,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 // document.getElementsByClassName(cpt.tl.id + "_height")[0].addEventListener("change", cpt.dim);
                 cpt.tl.appendChild(document.createElement("br"));
                 var widthLabel = document.createElement("label");
-				widthLabel.innerHTML = "Width: &nbsp;";
+				widthLabel.innerHTML = "Bredde : &nbsp;";
 				cpt.tl.appendChild(widthLabel);	
                 var width = document.createElement("input");
 				width.value = "20";
@@ -381,9 +491,19 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tl.appendChild(width);
                 // document.getElementsByClassName(cpt.tl.id + "_width")[0].addEventListener("change", cpt.dim);
                 cpt.tl.appendChild(document.createElement("br"));
+				var linewidthLabel = document.createElement("label");
+				linewidthLabel.innerHTML = "Linie : &nbsp;";
+				cpt.tl.appendChild(linewidthLabel);	
+                var linewidth = document.createElement("input");
+				linewidth.value = "1";
+				linewidth.setAttribute("type", "number");
+				linewidth.className = cpt.tl.id + "_lineWidth";
+				cpt.tl.appendChild(linewidth);
+				document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].addEventListener("change", cpt.clw);				
+                cpt.tl.appendChild(document.createElement("br"));
             /* Selected Colours*/
                 var selectColLabel = document.createElement("label");
-				selectColLabel.innerHTML = "Fyldfarve: &nbsp;";
+				selectColLabel.innerHTML = "Fyldfarve : &nbsp;";
                 cpt.tl.appendChild(selectColLabel);
                 var colSelect = document.createElement("select")
                 colSelect.className = cpt.tl.id + "_selectedFill";
@@ -392,7 +512,7 @@ var captainCanvas = function(canvas, tools, settings) {
                     document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
                 }
 				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].getElementsByTagName("option")[cpt.col.indexOf("Black")].setAttribute("selected","");
-				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].addEventListener("change",cpt.cls);
+				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].addEventListener("change",cpt.cfl);
                 cpt.tl.appendChild(document.createElement("br"));
                 var selectFilLabel = document.createElement("label");
 				selectFilLabel.innerHTML = "Stregfarve: &nbsp;";
@@ -404,16 +524,16 @@ var captainCanvas = function(canvas, tools, settings) {
                     document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
                 }
 				document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].getElementsByTagName("option")[cpt.col.indexOf("Transparent")].setAttribute("selected","");
-				document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].addEventListener("change",cpt.cls);
+				document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].addEventListener("change",cpt.cst);
                 cpt.tl.appendChild(document.createElement("br"));
                 cpt.tl.appendChild(document.createElement("br"));
             /* Import Heading */
 				var imp = document.createElement("h3");
-				imp.innerHTML = "Hent fil:"
+				imp.innerHTML = "Hent fil : "
 				cpt.tl.appendChild(imp);
 			/* Import JSON */
 				var importJSONLabel = document.createElement("label");
-				importJSONLabel.innerHTML = "Hent JSON&nbsp;";
+				importJSONLabel.innerHTML = "Hent JSON : &nbsp;";
 				cpt.tl.appendChild(importJSONLabel);
 				var importJSON = document.createElement("input");
 				importJSON.value = "Hent JSON";
@@ -427,7 +547,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tl.appendChild(document.createElement("br"));
             /* Export Heading */
 				var exp = document.createElement("h3");
-				exp.innerHTML = "Gem fil:"
+				exp.innerHTML = "Gem fil : "
 				cpt.tl.appendChild(exp);
 			/* Export File Name */
 				var fileName = document.createElement("input");
@@ -448,12 +568,13 @@ var captainCanvas = function(canvas, tools, settings) {
 				var exportSVG = document.createElement("input");
 				exportSVG.value = "Gem SVG";
 				exportSVG.setAttribute("type", "button");
+				exportSVG.setAttribute("disabled", "");
 				exportSVG.className = cpt.tl.id + "_exportSVG";
 				cpt.tl.appendChild(exportSVG);
 				document.getElementsByClassName(cpt.tl.id + "_exportSVG")[0].addEventListener("click", function() {
 					cpt.wsvg(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
 				});
-            /* Export SVG */
+            /* Export HTML Canvas */
 				var exportHtml = document.createElement("input");
 				exportHtml.value = "Gem HTML";
 				exportHtml.setAttribute("type", "button");
