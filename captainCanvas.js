@@ -8,9 +8,9 @@ var captainCanvas = function(canvas, tools, settings) {
 				"fit" : true,
 				"tog" : true
 			  };
-	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte"];
+	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent" };
+	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null };
 	cpt.drg = false;
 	cpt.drw = function(event) {
         var z = [];
@@ -134,38 +134,6 @@ var captainCanvas = function(canvas, tools, settings) {
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });				      
-
-			/*
-var x = 55;
-var y = 65;
-var w = 20;
-
-var c = document.getElementById("myCanvas");
-     var ctx = c.getContext('2d');
-
-                ctx.beginPath();
-    ctx.arc(x, y, w, 0, Math.PI * 2, true);
-	ctx.moveTo(x + w - (w * 3 / 10), y);
-    ctx.arc(x, y, (w / 2) + (w / 5), 0, Math.PI, false);
-    ctx.moveTo(x - (w / 5), y - (w / 5));
-    ctx.arc(x - (w * 3 / 10), y - (w / 5), (w / 10), 0, Math.PI * 2, true);
-    ctx.moveTo(x + (w * 2 / 5), (y - (w / 5)));
-    ctx.arc(x + (w * 3 / 10), y - (w / 5), (w / 10), 0, Math.PI * 2, true);
-
-    ctx.stroke();
-
-    ctx.beginPath();
-    ctx.arc(75, 75, 50, 0, Math.PI * 2, true); // Outer circle
-    ctx.moveTo(110, 75);
-    ctx.arc(75, 75, 35, 0, Math.PI, false);  // Mouth (clockwise)
-    ctx.moveTo(65, 65);
-    ctx.arc(60, 65, 5, 0, Math.PI * 2, true);  // Left eye
-    ctx.moveTo(95, 65);
-    ctx.arc(90, 65, 5, 0, Math.PI * 2, true);  // Right eye
-    ctx.stroke();
-  }
-}
-			*/
 		}
 		else if (f == "Hjerte") {
             let d = Math.min(w, w);
@@ -182,39 +150,20 @@ var c = document.getElementById("myCanvas");
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });   
-			/*
-
-                canvas = document.getElementById("myCanvas");
-    var context = canvas.getContext("2d");
-
-    var w = 55;
-    var x = 88;
-    var y = 55;
-    context.strokeStyle = "#000000";
-    context.lineWidth = 3;
-    context.fillStyle = "#FF0000";
-    var d = Math.min(w, w);    
-    context.moveTo(x, y + d / 4);
-    context.quadraticCurveTo(x, y, x + d / 4, y);
-    context.quadraticCurveTo(x + d / 2, y, x + d / 2, y + d / 4);
-    context.quadraticCurveTo(x + d / 2, y, x + d * 3/4, y);
-    context.quadraticCurveTo(x + d, y, x + d, y + d / 4);
-    context.quadraticCurveTo(x + d, y + d / 2, x + d * 3/4, y + d * 3/4);
-    context.lineTo(x + d / 2, y + d);
-    context.lineTo(x + d / 4, y + d * 3/4);
-    context.quadraticCurveTo(x, y + d / 2, x, y + d / 4);
-    context.stroke();
-    context.fill();
-			    ctx.beginPath();
-    ctx.moveTo(75, 40);
-    ctx.bezierCurveTo(75, 37, 70, 25, 50, 25);
-    ctx.bezierCurveTo(20, 25, 20, 62.5, 20, 62.5);
-    ctx.bezierCurveTo(20, 80, 40, 102, 75, 120);
-    ctx.bezierCurveTo(110, 102, 130, 80, 130, 62.5);
-    ctx.bezierCurveTo(130, 62.5, 130, 25, 100, 25);
-    ctx.bezierCurveTo(85, 25, 75, 37, 75, 40);
-    ctx.fill();
-			*/
+		}
+		else if (f == "Linie") {
+			if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
+				z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+				cpt.brs.LastX = x;
+				cpt.brs.LastY = y;
+			}
+			else {
+				z.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+				z.push({"Fct" : "fill" });
+				z.push({"Fct" : "stroke" });   
+				cpt.brs.LastX = null;
+				cpt.brs.LastY = null;
+			}
 		}
 
         if (cpt.drg) {
@@ -286,31 +235,6 @@ var c = document.getElementById("myCanvas");
 	cpt.dat = function () {  
 		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));        
 		for (let i = 0; i < cpt.dt.length; i++) {
-			/*
-			let funky = cpt.dt[i].Fct;
-            let x = cpt.dt[i].X;
-            let y = cpt.dt[i].Y;
-            let w = cpt.dt[i].Width;
-            let h = cpt.dt[i].Height;
-            let v = cpt.dt[i].Value;			
-            let s = cpt.dt[i].StartAngle;
-            let e = cpt.dt[i].EndAngle;
-			let a = cpt.dt[i].Angle;
-			let c = cpt.dt[i].Colour;
-			let o = cpt.dt[i].Offset;
-			let t = cpt.dt[i].Text;
-			let m = cpt.dt[i].MaxWidth;
-			let r = cpt.dt[i].Radius;
-            let x2 = cpt.dt[i].X2;
-            let y2 = cpt.dt[i].Y2;
-			let cx = cpt.dt[i].Cpx;
-			let cy = cpt.dt[i].Cpy;
-			let cx2 = cpt.dt[i].Cpx2;
-			let cy2 = cpt.dt[i].Cpy2;
-			let ry = cpt.dt[i].RadiusY;
-			let aw = cpt.dt[i].Anticlockwise;
-            cpt.drafi(funky, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2, cx, cy, cx2, cy2, ry, aw);
-			*/
 			cpt.drafi(
 				cpt.dt[i].Fct, 
 				cpt.dt[i].X, 
