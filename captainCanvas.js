@@ -10,7 +10,7 @@ var captainCanvas = function(canvas, tools, settings) {
 			  };
 	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null };
+	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0 };
 	cpt.drg = false;
 	cpt.drw = function(event) {
         var z = [];
@@ -150,20 +150,6 @@ var captainCanvas = function(canvas, tools, settings) {
 		    z.push({"Fct" : "closePath" });	   
 		    z.push({"Fct" : "fill" });
 		    z.push({"Fct" : "stroke" });   
-		}
-		else if (f == "Linie") {
-			if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
-				z.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-				cpt.brs.LastX = x;
-				cpt.brs.LastY = y;
-			}
-			else {
-				z.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-				z.push({"Fct" : "fill" });
-				z.push({"Fct" : "stroke" });   
-				cpt.brs.LastX = null;
-				cpt.brs.LastY = null;
-			}
 		}
 
         if (cpt.drg) {
@@ -577,16 +563,57 @@ var captainCanvas = function(canvas, tools, settings) {
 			});			
 		}
 		cpt.id.addEventListener("mousemove", function(event) {
-            cpt.dim();
-			cpt.drw(event);
+			if (document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value != "Linie") {
+				cpt.dim();
+				cpt.drw(event);
+			}
+			else {
+				if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
+					let x = event.pageX - cpt.id.offsetLeft;
+					let y = event.pageY - cpt.id.offsetTop;
+					cpt.dim();
+					cpt.dat();					  
+					cpt.drafi("lineTo", x, y);
+					cpt.drafi("closePath");
+					cpt.drafi("stroke");
+					cpt.drafi("fill");
+				}
+			}
 		});
-		cpt.id.addEventListener("mousedown", function(event) {            			
+		cpt.id.addEventListener("mousedown", function(event) { 
 			cpt.drg = true;	
-            cpt.dim();
-            cpt.drw(event);
+			if (document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value != "Linie") {				
+				cpt.dim();
+				cpt.drw(event);
+			}
+			else {
+				let x = event.pageX - cpt.id.offsetLeft;
+				let y = event.pageY - cpt.id.offsetTop;
+				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
+					cpt.dt.push({"Fct" : "beginPath" });
+					cpt.dt.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					cpt.brs.LastX = x;
+					cpt.brs.LastY = y;
+				}
+				else {
+					cpt.dt.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+					cpt.dt.push({"Fct" : "fill" });
+					cpt.dt.push({"Fct" : "stroke" });
+					cpt.dim();
+					cpt.dat();					
+					cpt.brs.LastX = null;
+					cpt.brs.LastY = null;
+				}
+			}
 		});
 		cpt.id.addEventListener("mouseup", function() {
-			cpt.drg = false;	
+			cpt.drg = false;
+			if (document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value != "Linie") {	
+				
+			}
+			else {
+				
+			}
 		});
 		cpt.id.addEventListener("mouseout", function() {
 			cpt.drg = false;	
