@@ -617,15 +617,9 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.dt.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
 					cpt.dt.push({"Fct" : "stroke" });
 					cpt.dim();
-					cpt.dat();
-                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
-                        cpt.drafi(buff[i].Fct, 
-					        cpt.brs.Buff[i].X, 
-					        cpt.brs.Buff[i].Y
-				        );
-                    }						
-					//cpt.brs.LastX = null;
-					//cpt.brs.LastY = null;
+					cpt.dat();	
+					cpt.brs.LastX = null;
+					cpt.brs.LastY = null;
 				}
 			}
             else if (cpt.brs.Slc == "Figur") {
@@ -641,7 +635,13 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.brs.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
 					cpt.brs.Buff.push({"Fct" : "stroke" });
 					cpt.dim();
-					cpt.dat();					
+					cpt.dat();
+                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
+                        cpt.drafi(buff[i].Fct, 
+					        cpt.brs.Buff[i].X, 
+					        cpt.brs.Buff[i].Y
+				        );
+                    }							
 				}
                 
             }
