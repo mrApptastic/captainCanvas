@@ -8,9 +8,9 @@ var captainCanvas = function(canvas, tools, settings) {
 				"fit" : true,
 				"tog" : true
 			  };
-	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie"];
+	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-	cpt.brs = {"Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0 };
+	cpt.brs = {"Slc" : "Firkant", "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [] };
 	cpt.drg = false;
 	cpt.drw = function(event) {
         var z = [];
@@ -563,11 +563,12 @@ var captainCanvas = function(canvas, tools, settings) {
 			});			
 		}
 		cpt.id.addEventListener("mousemove", function(event) {
-			if (document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value != "Linie") {
+            cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
+			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc != "Figur") {
 				cpt.dim();
 				cpt.drw(event);
 			}
-			else {
+			else if (cpt.brs.Slc == "Linie") {
 				if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
 					let x = event.pageX - cpt.id.offsetLeft;
 					let y = event.pageY - cpt.id.offsetTop;
@@ -576,17 +577,34 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.drafi("lineTo", x, y);
 					cpt.drafi("closePath");
 					cpt.drafi("stroke");
-					cpt.drafi("fill");
 				}
 			}
+            else if (cpt.brs.Slc == "Figur") {
+                if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
+					let x = event.pageX - cpt.id.offsetLeft;
+					let y = event.pageY - cpt.id.offsetTop;
+					cpt.dim();
+					cpt.dat();
+                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
+                        cpt.drafi(buff[i].Fct, 
+					        cpt.brs.Buff[i].X, 
+					        cpt.brs.Buff[i].Y
+				        );
+                    }					  
+					cpt.drafi("lineTo", x, y);
+					cpt.drafi("closePath");
+					cpt.drafi("stroke");
+				}                
+            }
 		});
 		cpt.id.addEventListener("mousedown", function(event) { 
 			cpt.drg = true;	
-			if (document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value != "Linie") {				
+            cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
+			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc != "Figur") {				
 				cpt.dim();
 				cpt.drw(event);
 			}
-			else {
+			else if (cpt.brs.Slc == "Linie") {
 				let x = event.pageX - cpt.id.offsetLeft;
 				let y = event.pageY - cpt.id.offsetTop;
 				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
@@ -597,14 +615,36 @@ var captainCanvas = function(canvas, tools, settings) {
 				}
 				else {
 					cpt.dt.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-					cpt.dt.push({"Fct" : "fill" });
 					cpt.dt.push({"Fct" : "stroke" });
 					cpt.dim();
-					cpt.dat();					
-					cpt.brs.LastX = null;
-					cpt.brs.LastY = null;
+					cpt.dat();
+                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
+                        cpt.drafi(buff[i].Fct, 
+					        cpt.brs.Buff[i].X, 
+					        cpt.brs.Buff[i].Y
+				        );
+                    }						
+					//cpt.brs.LastX = null;
+					//cpt.brs.LastY = null;
 				}
 			}
+            else if (cpt.brs.Slc == "Figur") {
+                let x = event.pageX - cpt.id.offsetLeft;
+				let y = event.pageY - cpt.id.offsetTop;
+				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
+					cpt.brs.Buff.push({"Fct" : "beginPath" });
+					cpt.brs.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					cpt.brs.Buff.LastX = x;
+					cpt.brs.Buff.LastY = y;
+				}
+				else {
+					cpt.brs.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+					cpt.brs.Buff.push({"Fct" : "stroke" });
+					cpt.dim();
+					cpt.dat();					
+				}
+                
+            }
 		});
 		cpt.id.addEventListener("mouseup", function() {
 			cpt.drg = false;
