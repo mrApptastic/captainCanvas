@@ -1,3 +1,4 @@
+
 var captainCanvas = function(canvas, tools, settings) {
 	var cpt = this;
 	cpt.id = document.getElementById(canvas);
@@ -586,7 +587,7 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.dim();
 					cpt.dat();
                     for (let i = 0; i < cpt.brs.Buff.length; i++) {
-                        cpt.drafi(buff[i].Fct, 
+                        cpt.drafi(cpt.brs.Buff[i].Fct, 
 					        cpt.brs.Buff[i].X, 
 					        cpt.brs.Buff[i].Y
 				        );
@@ -594,6 +595,14 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.drafi("lineTo", x, y);
 					cpt.drafi("closePath");
 					cpt.drafi("stroke");
+                    if (cpt.brs.Buff.length > 0) {
+                        if (x >= (cpt.brs.Buff[1].X - 5) && x <= (cpt.brs.Buff[1].X + 5) && y >= (cpt.brs.Buff[1].Y - 5) && y <= (cpt.brs.Buff[1].Y + 5)) {
+                            // cpt.drafi("fillRect", x, y, 25, 25);
+                            cpt.drafi("closePath");
+                            cpt.drafi("fill");
+                            cpt.drafi("stroke");                       
+                        }
+                    }
 				}                
             }
 		});
@@ -625,24 +634,45 @@ var captainCanvas = function(canvas, tools, settings) {
             else if (cpt.brs.Slc == "Figur") {
                 let x = event.pageX - cpt.id.offsetLeft;
 				let y = event.pageY - cpt.id.offsetTop;
-				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
-					cpt.brs.Buff.push({"Fct" : "beginPath" });
-					cpt.brs.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-					cpt.brs.Buff.LastX = x;
-					cpt.brs.Buff.LastY = y;
-				}
-				else {
-					cpt.brs.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-					cpt.brs.Buff.push({"Fct" : "stroke" });
-					cpt.dim();
-					cpt.dat();
-                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
-                        cpt.drafi(buff[i].Fct, 
+                let reset = false;
+                
+                if (cpt.brs.Buff.length > 0) {
+                    // console.log("x : " + x + " y : " + y + " x1 : " + cpt.brs.Buff[1].X + " y1 " + cpt.brs.Buff[1].Y);
+                    if (x >= (cpt.brs.Buff[1].X - 5) && x <= (cpt.brs.Buff[1].X + 5) && y >= (cpt.brs.Buff[1].Y - 5) && y <= (cpt.brs.Buff[1].Y + 5)) {
+					    cpt.brs.Buff.push({"Fct" : "lineTo", "X" : cpt.brs.Buff[1].X, "Y" : cpt.brs.Buff[1].Y });
+                        cpt.brs.Buff.push({"Fct" : "closePath" });
+                        cpt.brs.Buff.push({"Fct" : "stroke" });
+                        cpt.brs.Buff.push({"Fct" : "fill" });	
+                        cpt.dt = cpt.dt.concat(cpt.brs.Buff);
+		                cpt.dat();  
+                        cpt.brs.LastX = null;
+                        cpt.brs.LastY = null;
+                        cpt.brs.Buff = [];
+                        reset = true;
+                    }
+                }
+                if (!reset) {
+                    if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
+					    cpt.brs.Buff.push({"Fct" : "beginPath" });
+					    cpt.brs.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					    cpt.brs.LastX = x;
+					    cpt.brs.LastY = y;
+				    }
+				    else {
+					    cpt.brs.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+                        // cpt.brs.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					    cpt.dim();
+					    cpt.dat();
+                        for (let i = 0; i < cpt.brs.Buff.length; i++) {
+                            cpt.drafi( cpt.brs.Buff[i].Fct, 
 					        cpt.brs.Buff[i].X, 
 					        cpt.brs.Buff[i].Y
-				        );
-                    }							
-				}
+				            );
+                        }
+                        cpt.drafi("stroke");	
+                        // cpt.drafi("fill");							
+				    }
+                }
                 
             }
 		});
@@ -656,7 +686,7 @@ var captainCanvas = function(canvas, tools, settings) {
 			}
 		});
 		cpt.id.addEventListener("mouseout", function() {
-			cpt.drg = false;	
+			cpt.drg = false;
 		});
 		if (cpt.set.fit) {
 			window.addEventListener("resize", cpt.ref);
