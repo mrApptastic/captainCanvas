@@ -7,7 +7,8 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.dt = [];
 	cpt.set = {
 				"fit" : true,
-				"tog" : true
+				"tog" : true,
+                "key" : true
 			  };
 	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur"];
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
@@ -691,6 +692,22 @@ var captainCanvas = function(canvas, tools, settings) {
 		if (cpt.set.fit) {
 			window.addEventListener("resize", cpt.ref);
 		}
+        if (cpt.set.key) {           
+            window.addEventListener("keydown", function (event) {
+                var k = event.keyCode;
+                switch (k) {
+                    case 49 : alert("Fyldfarve"); break;
+                    case 50 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
+                    case 51 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) + 1; break;
+                    case 52 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
+                    case 53 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) + 1; break;
+                    case 54 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) - 1; break;                    
+                    case 55 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) + 1; break;
+                    case 56 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) > 0 ? parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) - 1 : parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value); break;
+                    case 57 : alert("Bredde"); break;                 
+                }
+            })
+        }
 		cpt.ref();	
 		cpt.cls();
         cpt.dim();	
