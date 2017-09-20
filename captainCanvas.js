@@ -192,17 +192,47 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.cfl = function() {
 		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
 		cpt.brs.Fil = fill;
-		cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+		if (cpt.dt.length > 0) {
+			if (cpt.dt[cpt.dt.length - 1].Fct != "fillStyle") {
+				cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+			}
+			else {
+				cpt.dt[cpt.dt.length - 1].Value = cpt.brs.Fil;
+			}
+		}
+		else {
+			cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+		}		
 	};
 	cpt.cst = function() {
 		var stroke = document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value;
 		cpt.brs.Str = stroke;
-		cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+		if (cpt.dt.length > 0) {
+			if (cpt.dt[cpt.dt.length - 1].Fct != "strokeStyle") {
+				cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+			}
+			else {
+				cpt.dt[cpt.dt.length - 1].Value = cpt.brs.Str;
+			}
+		}
+		else {
+			cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+		}		
 	};
 	cpt.clw = function() {
 		var lineWidth = document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value;
 		if (!isNaN(lineWidth)) {
-			cpt.dt.push({"Fct" : "lineWidth", "Value" : lineWidth});
+			if (cpt.dt.length > 0) {
+				if (cpt.dt[cpt.dt.length - 1].Fct != "lineWidth") {
+					cpt.dt.push({"Fct" : "lineWidth", "Value" : lineWidth});
+				}
+				else {
+					cpt.dt[cpt.dt.length - 1].Value = lineWidth;
+				}
+			}
+			else {
+				cpt.dt.push({"Fct" : "lineWidth", "Value" : lineWidth});
+			}			
         }
 	};
 	cpt.cls = function () {
@@ -389,6 +419,7 @@ var captainCanvas = function(canvas, tools, settings) {
         cpt.down(name  + ".html", "data:text/html;charset=utf-8," + encodeURIComponent(html));
     };
 	cpt.wpng = function (fil) {
+		cpt.dat();
 		cpt.down((fil ? fil : "captainCanvas")  + ".png", "data:image/png;base64;" + cpt.id.toDataURL());
 	};
 	cpt.down = function (filename, txt) {
@@ -423,6 +454,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				for (let i = 0; i < funky.length; i++) {
 					document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].innerHTML += "<option value='" + funky[i] + "'>" + funky[i] + "</option>";
 				}
+				// document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].addEventListener("change", cpt.dat);
                 cpt.tl.appendChild(document.createElement("br"));
             /* Selected Height, Width And Linewidth */
             	var heightLabel = document.createElement("label");
@@ -546,9 +578,11 @@ var captainCanvas = function(canvas, tools, settings) {
 				document.getElementsByClassName(cpt.tl.id + "_exportPNG")[0].addEventListener("click", function() {
 					cpt.wpng(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
 				});
+			/* Edit Data Toggler */
+			/* Data Edit Area */
 		/* Tool Box Toggler */
 		if (cpt.set.tog) {
-			cpt.tl.style.cssText = "position: fixed; right: 0; top: 0; z-index: 98; width: 30vw;"
+			cpt.tl.style.cssText = "position: fixed; right: 0; top: 0; z-index: 98; width: 30vw; overflow-y : auto;"
 			let toggler = document.createElement("span");
 			let txt = document.createElement("span");
 			let chk = document.createElement("input");
@@ -696,15 +730,18 @@ var captainCanvas = function(canvas, tools, settings) {
             window.addEventListener("keydown", function (event) {
                 var k = event.keyCode;
                 switch (k) {
-                    case 49 : alert("Fyldfarve"); break;
-                    case 50 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
-                    case 51 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) + 1; break;
-                    case 52 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
-                    case 53 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) + 1; break;
-                    case 54 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) - 1; break;                    
-                    case 55 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) + 1; break;
-                    case 56 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) > 0 ? parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) - 1 : parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value); break;
-                    case 57 : alert("Bredde"); break;                 
+                    case 49 : document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) > 0 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) - 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
+                    case 50 : document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) < cpt.fct.length - 1 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) + 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
+                    case 51 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
+                    case 52 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) + 1; break;
+                    case 53 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) - 1; break;
+                    case 54 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) + 1; break;
+					case 55 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) > 0 ? parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) - 1 : parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value); cpt.clw(); break;                    
+                    case 56 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) + 1; cpt.clw(); break;                    
+                    case 57 : document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
+                    case 48 : document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
+                    case 171 : document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;
+                    case 192 : document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;				
                 }
             })
         }
