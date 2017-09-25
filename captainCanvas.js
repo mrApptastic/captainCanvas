@@ -161,7 +161,8 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.dat();  
 
 		if (!cpt.drg) {
-            for (let i = 0; i < z.length; i++) {                
+            for (let i = 0; i < z.length; i++) {
+				cpt.drafi("globalAlpha", null, null, null, null, "0.5");
                 cpt.drafi(z[i].Fct, 
 					z[i].X, 
 					z[i].Y, 
@@ -186,6 +187,7 @@ var captainCanvas = function(canvas, tools, settings) {
 					z[i].Rotation,
 					z[i].Anticlockwise
 				);
+				cpt.drafi("globalAlpha", null, null, null, null, "1");
             }
         }
 	};
@@ -733,8 +735,7 @@ var captainCanvas = function(canvas, tools, settings) {
                         cpt.drafi("stroke");	
                         // cpt.drafi("fill");							
 				    }
-                }
-                
+                }                
             }
 		});
 		cpt.id.addEventListener("mouseup", function() {
