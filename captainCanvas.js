@@ -4,7 +4,8 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.id = document.getElementById(canvas);
 	cpt.tl = document.getElementById(tools);
 	cpt.ct = cpt.id.getContext("2d");
-	cpt.dt = [];
+	cpt.ix = 0;
+	cpt.dt = [[]];	
 	cpt.set = {
 				"fit" : true,
 				"tog" : true,
@@ -155,14 +156,14 @@ var captainCanvas = function(canvas, tools, settings) {
 		}
 
         if (cpt.drg) {
-            cpt.dt = cpt.dt.concat(z);
+            cpt.dt[cpt.ix] = cpt.dt[cpt.ix].concat(z);
         }
 
 		cpt.dat();  
 
 		if (!cpt.drg) {
             for (let i = 0; i < z.length; i++) {
-				cpt.drafi("globalAlpha", null, null, null, null, "0.5");
+				cpt.drafi("globalAlpha", null, null, null, null, "0.8");
                 cpt.drafi(z[i].Fct, 
 					z[i].X, 
 					z[i].Y, 
@@ -194,46 +195,46 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.cfl = function() {
 		var fill = document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value;
 		cpt.brs.Fil = fill;
-		if (cpt.dt.length > 0) {
-			if (cpt.dt[cpt.dt.length - 1].Fct != "fillStyle") {
-				cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+		if (cpt.dt[cpt.ix].length > 0) {
+			if (cpt.dt[cpt.ix][cpt.dt[cpt.ix].length - 1].Fct != "fillStyle") {
+				cpt.dt[cpt.ix].push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
 			}
 			else {
-				cpt.dt[cpt.dt.length - 1].Value = cpt.brs.Fil;
+				cpt.dt[cpt.ix][cpt.dt[cpt.ix].length - 1].Value = cpt.brs.Fil;
 			}
 		}
 		else {
-			cpt.dt.push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+			cpt.dt[cpt.ix].push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
 		}		
 	};
 	cpt.cst = function() {
 		var stroke = document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value;
 		cpt.brs.Str = stroke;
-		if (cpt.dt.length > 0) {
-			if (cpt.dt[cpt.dt.length - 1].Fct != "strokeStyle") {
-				cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+		if (cpt.dt[cpt.ix].length > 0) {
+			if (cpt.dt[cpt.ix][cpt.dt[cpt.ix].length - 1].Fct != "strokeStyle") {
+				cpt.dt[cpt.ix].push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
 			}
 			else {
-				cpt.dt[cpt.dt.length - 1].Value = cpt.brs.Str;
+				cpt.dt[cpt.ix][cpt.dt[cpt.ix].length - 1].Value = cpt.brs.Str;
 			}
 		}
 		else {
-			cpt.dt.push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+			cpt.dt[cpt.ix].push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
 		}		
 	};
 	cpt.clw = function() {
 		var lineWidth = document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value;
 		if (!isNaN(lineWidth)) {
-			if (cpt.dt.length > 0) {
-				if (cpt.dt[cpt.dt.length - 1].Fct != "lineWidth") {
-					cpt.dt.push({"Fct" : "lineWidth", "Value" : lineWidth});
+			if (cpt.dt[cpt.ix].length > 0) {
+				if (cpt.dt[cpt.ix][cpt.dt[cpt.ix].length - 1].Fct != "lineWidth") {
+					cpt.dt[cpt.ix].push({"Fct" : "lineWidth", "Value" : lineWidth});
 				}
 				else {
-					cpt.dt[cpt.dt.length - 1].Value = lineWidth;
+					cpt.dt[cpt.ix][cpt.dt[cpt.ix].length - 1].Value = lineWidth;
 				}
 			}
 			else {
-				cpt.dt.push({"Fct" : "lineWidth", "Value" : lineWidth});
+				cpt.dt[cpt.ix].push({"Fct" : "lineWidth", "Value" : lineWidth});
 			}			
         }
 	};
@@ -254,33 +255,36 @@ var captainCanvas = function(canvas, tools, settings) {
     };
 	cpt.dat = function () {  
 		cpt.ct.clearRect(0,0, cpt.id.getAttribute("width"), cpt.id.getAttribute("height"));        
-		for (let i = 0; i < cpt.dt.length; i++) {
-			cpt.drafi(
-				cpt.dt[i].Fct, 
-				cpt.dt[i].X, 
-				cpt.dt[i].Y, 
-				cpt.dt[i].Width, 
-				cpt.dt[i].Height, 
-				cpt.dt[i].Value, 
-				cpt.dt[i].StartAngle, 
-				cpt.dt[i].EndAngle, 
-				cpt.dt[i].Angle, 
-				cpt.dt[i].Colour, 
-				cpt.dt[i].Offset, 
-				cpt.dt[i].Text, 
-				cpt.dt[i].MaxWidth, 
-				cpt.dt[i].Radius, 
-				cpt.dt[i].X2, 
-				cpt.dt[i].Y2, 
-				cpt.dt[i].Cpx, 
-				cpt.dt[i].Cpy, 
-				cpt.dt[i].Cpx2, 
-				cpt.dt[i].Cpy2,
-				cpt.dt[i].RadiusY,
-				cpt.dt[i].Rotation,
-				cpt.dt[i].Anticlockwise
-			);
-		} 
+		for (let j = cpt.dt.length -1; j >= 0; j--) {
+			for (let i = 0; i < cpt.dt[j].length; i++) {
+				cpt.drafi(
+					cpt.dt[j][i].Fct, 
+					cpt.dt[j][i].X, 
+					cpt.dt[j][i].Y, 
+					cpt.dt[j][i].Width, 
+					cpt.dt[j][i].Height, 
+					cpt.dt[j][i].Value, 
+					cpt.dt[j][i].StartAngle, 
+					cpt.dt[j][i].EndAngle, 
+					cpt.dt[j][i].Angle, 
+					cpt.dt[j][i].Colour, 
+					cpt.dt[j][i].Offset, 
+					cpt.dt[j][i].Text, 
+					cpt.dt[j][i].MaxWidth, 
+					cpt.dt[j][i].Radius, 
+					cpt.dt[j][i].X2, 
+					cpt.dt[j][i].Y2, 
+					cpt.dt[j][i].Cpx, 
+					cpt.dt[j][i].Cpy, 
+					cpt.dt[j][i].Cpx2, 
+					cpt.dt[j][i].Cpy2,
+					cpt.dt[j][i].RadiusY,
+					cpt.dt[j][i].Rotation,
+					cpt.dt[j][i].Anticlockwise
+				);
+			}
+		}
+		 
 	};
     cpt.drafi = function (f, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2, cx, cy, cx2, cy2, ry, rt, aw) {
 		if (f == "strokeStyle" || f == "fillStyle" || f == "shadowOffsetX" || f == "shadowOffsetY" || f == "shadowBlur" || f == "shadowColor" || f == "font" || f == "textAlign" || f == "textBaseline" || f == "globalAlpha" || f == "globalCompositeOperation" || f == "lineWidth" || f == "lineCap" || f == "lineJoin" || f == "miterLimit") {
@@ -359,13 +363,13 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.wsvg = function (fil) {
 		var firstLine = '<?xml version="1.0" encoding="UTF-8"><svg width="' + cpt.id.getAttribute("width") + '" height="' + cpt.id.getAttribute("height") + '">';
 		var dataLines = '';
-		for (let i = 0; i < cpt.dt.length; i++) {
-			let funky = cpt.dt[i].Fct;
+		for (let i = 0; i < cpt.dt[cpt.ix].length; i++) {
+			let funky = cpt.dt[cpt.ix][i].Fct;
 			if (funky == "fillRect") {
-				dataLines += '<rect x="' + cpt.dt[i].X  + '" y="' + cpt.dt[i].Y + '" width="' + cpt.dt[i].W + '" height="' + cpt.dt[i].H + '" style="fill:rgb(0,0,0);" />';
+				dataLines += '<rect x="' + cpt.dt[cpt.ix][i].X  + '" y="' + cpt.dt[cpt.ix][i].Y + '" width="' + cpt.dt[cpt.ix][i].W + '" height="' + cpt.dt[cpt.ix][i].H + '" style="fill:rgb(0,0,0);" />';
 			}
 			else if (funky == "strokeRect") {
-				dataLines += '<rect x="' + cpt.dt[i].X  + '" y="' + cpt.dt[i].Y + '" width="' + cpt.dt[i].W + '" height="' + cpt.dt[i].H + '" style="fill:rgb(0,0,0);" />';
+				dataLines += '<rect x="' + cpt.dt[cpt.ix][i].X  + '" y="' + cpt.dt[cpt.ix][i].Y + '" width="' + cpt.dt[cpt.ix][i].W + '" height="' + cpt.dt[cpt.ix][i].H + '" style="fill:rgb(0,0,0);" />';
 			}			
 		}
 		var lastLine = '</svg>';
@@ -389,8 +393,8 @@ var captainCanvas = function(canvas, tools, settings) {
         + name
         + '").getContext("2d");\r\n';
 		
-		for (let i = 0; i < cpt.dt.length; i++) {	
-			let p = cpt.dt[i];
+		for (let i = 0; i < cpt.dt[cpt.ix].length; i++) {	
+			let p = cpt.dt[cpt.ix][i];
 			let isAtr = false;
 			let add = name + '.' + p.Fct + "(";
 			for (let j in p) {				
@@ -591,7 +595,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(dtg);
                 document.getElementsByClassName(cpt.tl.id + "_dataToggler")[0].addEventListener("change", function(event) {
                     if (this.checked) {
-                        document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].value = JSON.stringify(cpt.dt);
+                        document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].value = JSON.stringify(cpt.dt[cpt.ix]);
                         document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].style.display = "block";
                     }
                     else {
@@ -606,7 +610,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 dtf.className = cpt.tl.id + "_dataEditArea";
                 cpt.tl.appendChild(dtf);
                 document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].addEventListener("blur", function(event) {
-                    cpt.dt = JSON.parse(this.value);
+                    cpt.dt[cpt.ix] = JSON.parse(this.value);
                 });
 		/* Tool Box Toggler */
 		if (cpt.set.tog) {
@@ -680,14 +684,14 @@ var captainCanvas = function(canvas, tools, settings) {
 				let x = event.pageX - cpt.id.offsetLeft;
 				let y = event.pageY - cpt.id.offsetTop;
 				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
-					cpt.dt.push({"Fct" : "beginPath" });
-					cpt.dt.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					cpt.dt[cpt.ix].push({"Fct" : "beginPath" });
+					cpt.dt[cpt.ix].push({"Fct" : "moveTo", "X" : x, "Y" : y });
 					cpt.brs.LastX = x;
 					cpt.brs.LastY = y;
 				}
 				else {
-					cpt.dt.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-					cpt.dt.push({"Fct" : "stroke" });
+					cpt.dt[cpt.ix].push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+					cpt.dt[cpt.ix].push({"Fct" : "stroke" });
 					cpt.dim();
 					cpt.dat();	
 					cpt.brs.LastX = null;
@@ -706,7 +710,7 @@ var captainCanvas = function(canvas, tools, settings) {
                         cpt.brs.Buff.push({"Fct" : "closePath" });
                         cpt.brs.Buff.push({"Fct" : "stroke" });
                         cpt.brs.Buff.push({"Fct" : "fill" });	
-                        cpt.dt = cpt.dt.concat(cpt.brs.Buff);
+                        cpt.dt[cpt.ix] = cpt.dt[cpt.ix].concat(cpt.brs.Buff);
 		                cpt.dat();  
                         cpt.brs.LastX = null;
                         cpt.brs.LastY = null;
@@ -742,12 +746,12 @@ var captainCanvas = function(canvas, tools, settings) {
 			cpt.drg = false;
             if (document.getElementsByClassName(cpt.tl.id + "_dataToggler")[0].checked) {
                 //document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].innerHTML = "";
-                document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].value = JSON.stringify(cpt.dt);
+                document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].value = JSON.stringify(cpt.dt[cpt.ix]);
                 document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].style.display = "block";
                 /*
-                for (let i = cpt.dt.length; i >= 0; i--) {
-                    let index = cpt.dt.length - i;
-                    let funky = cpt.dt[index].Fct.toString();
+                for (let i = cpt.dt[cpt.ix].length; i >= 0; i--) {
+                    let index = cpt.dt[cpt.ix].length - i;
+                    let funky = cpt.dt[cpt.ix][index].Fct.toString();
                     document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].innerHTML += i 
                     + " " + '<input type="text" value="' + funky + '"/><br/>';
                 }
