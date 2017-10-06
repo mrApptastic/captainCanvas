@@ -585,6 +585,36 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.wpng(document.getElementsByClassName(cpt.tl.id + "_fileName")[0].value);
 				});
                 cpt.tl.appendChild(document.createElement("br"));
+			/* Data Level Area */
+                var lel = document.createElement("span");
+                lel.innerHTML = "Rediger Niveau : ";
+                cpt.tl.appendChild(lel);
+                var ltg = document.createElement("input");
+                ltg.setAttribute("type", "checkbox");                
+                ltg.className = cpt.tl.id + "_levelToggler";
+                cpt.tl.appendChild(ltg);
+                document.getElementsByClassName(cpt.tl.id + "_levelToggler")[0].addEventListener("change", function(event) {
+                    if (this.checked) {
+                        document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0].style.display = "block";
+                    }
+                    else {
+                        document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0].style.display = "none";
+                    }
+                });
+
+				var ltf = document.createElement("div");
+                ltf.style.cssText = "display: none;";
+                ltf.className = cpt.tl.id + "_dataLevelArea";
+                cpt.tl.appendChild(ltf);
+				var lev = document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0];
+				var lll = document.createElement("span");
+                lll.innerHTML = "Niveau : ";
+                lev.appendChild(lll);
+                cpt.tl.appendChild(document.createElement("br"));
+				var lfs = document.createElement("select");
+                lfs.className = cpt.tl.id + "_dataLevelSelect";
+                lev.appendChild(lfs);
+				var lse = document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0]
 			/* Edit Data Toggler */
                 var dtt = document.createElement("span");
                 dtt.innerHTML = "Rediger Data : ";
@@ -606,7 +636,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(document.createElement("br"));
 			/* Data Edit Area */
                 var dtf = document.createElement("textarea");
-                dtf.style.cssText = "height: 200px; overflow-y : auto; display: none;";
+                dtf.style.cssText = "height: 200px; width: 95%; overflow-y : auto; display: none;";
                 dtf.className = cpt.tl.id + "_dataEditArea";
                 cpt.tl.appendChild(dtf);
                 document.getElementsByClassName(cpt.tl.id + "_dataEditArea")[0].addEventListener("blur", function(event) {
