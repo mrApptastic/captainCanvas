@@ -601,7 +601,6 @@ var captainCanvas = function(canvas, tools, settings) {
                         document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0].style.display = "none";
                     }
                 });
-
 				var ltf = document.createElement("div");
                 ltf.style.cssText = "display: none;";
                 ltf.className = cpt.tl.id + "_dataLevelArea";
@@ -614,7 +613,14 @@ var captainCanvas = function(canvas, tools, settings) {
 				var lfs = document.createElement("select");
                 lfs.className = cpt.tl.id + "_dataLevelSelect";
                 lev.appendChild(lfs);
-				var lse = document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0]
+				var lse = document.getElementsByClassName(cpt.tl.id + "_dataLevelSelect")[0];
+                for (let i = 0; i < cpt.dt.length; i++) {
+                    lse.innerHTML += '<option value="' + i + '">' + i + '</option>';
+                }
+                lse.addEventListener("change", function (event) {
+                    cpt.ix = this.value;
+                    cpt.dat();
+                });
 			/* Edit Data Toggler */
                 var dtt = document.createElement("span");
                 dtt.innerHTML = "Rediger Data : ";
