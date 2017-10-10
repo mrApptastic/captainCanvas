@@ -12,7 +12,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 "key" : true,
 				"lan" : window.navigator.language.indexOf("da") != -1
 			  };
-	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur"];
+	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur (Linie)"];
 	// Halvmåne, Pil, Kors, Figur (Kurve), Figur (Bézier)
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
 	cpt.brs = {"Slc" : "Firkant", "Lvl" : 0, "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [] };
@@ -450,6 +450,9 @@ var captainCanvas = function(canvas, tools, settings) {
 		}
 	};
 	cpt.init = function () {
+        /* Hide cursor when above drawing area */
+                // cpt.id.style.cursor = "none";
+                // cpt.id.style.webkitCursor = "none";
 		/* Tool Box Contents */
 			/* Heading */
 				cpt.tl.appendChild(document.createElement("h1"));
@@ -482,7 +485,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 // document.getElementsByClassName(cpt.tl.id + "_height")[0].addEventListener("change", cpt.dim);
                 cpt.tl.appendChild(document.createElement("br"));
                 var widthLabel = document.createElement("label");
-				widthLabel.innerHTML = "Bredde : &nbsp;";
+				widthLabel.innerHTML = cpt.set.lan ? "Bredde : &nbsp;" : "Width : &nbsp;";
 				cpt.tl.appendChild(widthLabel);	
                 var width = document.createElement("input");
 				width.value = "20";
@@ -492,7 +495,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 // document.getElementsByClassName(cpt.tl.id + "_width")[0].addEventListener("change", cpt.dim);
                 cpt.tl.appendChild(document.createElement("br"));
 				var linewidthLabel = document.createElement("label");
-				linewidthLabel.innerHTML = "Linie : &nbsp;";
+				linewidthLabel.innerHTML = cpt.set.lan ? "Linie : &nbsp;" : "Line : &nbsp;";
 				cpt.tl.appendChild(linewidthLabel);	
                 var linewidth = document.createElement("input");
 				linewidth.value = "1";
@@ -503,7 +506,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(document.createElement("br"));
             /* Selected Colours*/
                 var selectColLabel = document.createElement("label");
-				selectColLabel.innerHTML = "Fyldfarve : &nbsp;";
+				selectColLabel.innerHTML = cpt.set.lan ? "Fyldfarve : &nbsp;" : "Fill : &nbsp;";
                 cpt.tl.appendChild(selectColLabel);
                 var colSelect = document.createElement("select")
                 colSelect.className = cpt.tl.id + "_selectedFill";
@@ -515,7 +518,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].addEventListener("change",cpt.cfl);
                 cpt.tl.appendChild(document.createElement("br"));
                 var selectFilLabel = document.createElement("label");
-				selectFilLabel.innerHTML = "Stregfarve: &nbsp;";
+				selectFilLabel.innerHTML = cpt.set.lan ? "Stregfarve : &nbsp;" : "Stroke : &nbsp;";
                 cpt.tl.appendChild(selectFilLabel);
                 var filSelect = document.createElement("select")
                 filSelect.className = cpt.tl.id + "_selectedStroke";
@@ -529,14 +532,14 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(document.createElement("br"));
             /* Import Heading */
 				var imp = document.createElement("h3");
-				imp.innerHTML = "Hent fil : "
+				imp.innerHTML = cpt.set.lan ? "Hent fil : " : "Load file : "
 				cpt.tl.appendChild(imp);
 			/* Import JSON */
 				var importJSONLabel = document.createElement("label");
-				importJSONLabel.innerHTML = "Hent JSON : &nbsp;";
+				importJSONLabel.innerHTML = cpt.set.lan ? "Hent JSON : &nbsp;" : "Load JSON : &nbsp;";
 				cpt.tl.appendChild(importJSONLabel);
 				var importJSON = document.createElement("input");
-				importJSON.value = "Hent JSON";
+				// importJSON.value = "Hent JSON";
 				importJSON.setAttribute("type", "file");
 				importJSON.className = cpt.tl.id + "_importJSON";
 				cpt.tl.appendChild(importJSON);
@@ -547,17 +550,17 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tl.appendChild(document.createElement("br"));
             /* Export Heading */
 				var exp = document.createElement("h3");
-				exp.innerHTML = "Gem fil : "
+				exp.innerHTML = cpt.set.lan ? "Gem fil : " : "Save file : ";
 				cpt.tl.appendChild(exp);
 			/* Export File Name */
 				var fileName = document.createElement("input");
-				fileName.setAttribute("placeholder", "Filnavn");
+				fileName.setAttribute("placeholder", cpt.set.lan ? "Filnavn" : "File Name");
 				fileName.setAttribute("type", "text");
 				fileName.className = cpt.tl.id + "_fileName";
 				cpt.tl.appendChild(fileName);		
 			/* Export JSON */
 				var exportJSON = document.createElement("input");
-				exportJSON.value = "Gem JSON";
+				exportJSON.value = cpt.set.lan ? "Gem JSON" : "Save JSON";
 				exportJSON.setAttribute("type", "button");
 				exportJSON.className = cpt.tl.id + "_exportJSON";
 				cpt.tl.appendChild(exportJSON);
@@ -566,7 +569,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 			/* Export SVG */
 				var exportSVG = document.createElement("input");
-				exportSVG.value = "Gem SVG";
+				exportSVG.value = cpt.set.lan ? "Gem SVG" : "Save SVG";
 				exportSVG.setAttribute("type", "button");
 				exportSVG.setAttribute("disabled", "");
 				exportSVG.className = cpt.tl.id + "_exportSVG";
@@ -576,7 +579,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
             /* Export HTML Canvas */
 				var exportHtml = document.createElement("input");
-				exportHtml.value = "Gem HTML";
+				exportHtml.value = cpt.set.lan ? "Gem HTML" : "Save HTML";
 				exportHtml.setAttribute("type", "button");
 				exportHtml.className = cpt.tl.id + "_exportHtml";
 				cpt.tl.appendChild(exportHtml);
@@ -585,7 +588,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 			/* Export PNG */
 				var exportPNG = document.createElement("input");
-				exportPNG.value = "Gem PNG";
+				exportPNG.value = cpt.set.lan ? "Gem PNG" : "Save PNG";
 				exportPNG.setAttribute("type", "button");
 				exportPNG.className = cpt.tl.id + "_exportPNG";
 				cpt.tl.appendChild(exportPNG);
@@ -595,7 +598,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(document.createElement("br"));
 			/* Data Level Area */
                 var lel = document.createElement("span");
-                lel.innerHTML = "Rediger Niveau : ";
+                lel.innerHTML = cpt.set.lan ? "Rediger Niveau : " : "Edit Level : ";
                 cpt.tl.appendChild(lel);
                 var ltg = document.createElement("input");
                 ltg.setAttribute("type", "checkbox");                
@@ -616,7 +619,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(ltf);
 				var lev = document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0];
 				var lll = document.createElement("span");
-                lll.innerHTML = "Niveau : ";
+                lll.innerHTML = cpt.set.lan ? "Niveau : " : "Level : ";
                 lev.appendChild(lll);
                 cpt.tl.appendChild(document.createElement("br"));
 				var lfs = document.createElement("select");
@@ -629,7 +632,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 });
 				var ltb = document.createElement("input");
                 ltb.setAttribute("type", "button");
-				ltb.value = "Tilføj";
+				ltb.value = cpt.set.lan ? "Tilføj" : "Add";
                 ltb.className = cpt.tl.id + "_dataLevelAdd";
                 lev.appendChild(ltb);
 				document.getElementsByClassName(cpt.tl.id + "_dataLevelAdd")[0].addEventListener("click", function() {
@@ -638,7 +641,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 				var ltr = document.createElement("input");
                 ltr.setAttribute("type", "button");
-				ltr.value = "Fjern sidste";
+				ltr.value = cpt.set.lan ? "Fjern sidste" : "Remove last";
                 ltr.className = cpt.tl.id + "_dataLevelRemove";
                 lev.appendChild(ltr);
 				document.getElementsByClassName(cpt.tl.id + "_dataLevelRemove")[0].addEventListener("click", function() {
@@ -647,7 +650,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 			/* Edit Data Toggler */
                 var dtt = document.createElement("span");
-                dtt.innerHTML = "Rediger Data : ";
+                dtt.innerHTML = cpt.set.lan ? "Rediger Data : " : "Edit Data : ";
                 cpt.tl.appendChild(dtt);
                 var dtg = document.createElement("input");
                 dtg.setAttribute("type", "checkbox");                
@@ -692,7 +695,7 @@ var captainCanvas = function(canvas, tools, settings) {
 		}
 		cpt.id.addEventListener("mousemove", function(event) {
             cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
-			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc != "Figur") {
+			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc.indexOf("Figur") == -1) {
 				cpt.dim();
 				cpt.drw(event);
 			}
@@ -707,7 +710,7 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.drafi("stroke");
 				}
 			}
-            else if (cpt.brs.Slc == "Figur") {
+            else if (cpt.brs.Slc.indexOf("Figur") != -1) {
                 if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
 					let x = event.pageX - cpt.id.offsetLeft;
 					let y = event.pageY - cpt.id.offsetTop;
@@ -736,7 +739,7 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.id.addEventListener("mousedown", function(event) { 
 			cpt.drg = true;	
             cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
-			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc != "Figur") {				
+			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc.indexOf("Figur") == -1) {				
 				cpt.dim();
 				cpt.drw(event);
 			}
@@ -757,8 +760,8 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.brs.LastX = null;
 					cpt.brs.LastY = null;
 				}
-			}
-            else if (cpt.brs.Slc == "Figur") {
+			}            
+            else if (cpt.brs.Slc.indexOf("Figur") != -1) {
                 let x = event.pageX - cpt.id.offsetLeft;
 				let y = event.pageY - cpt.id.offsetTop;
                 let reset = false;
@@ -776,6 +779,12 @@ var captainCanvas = function(canvas, tools, settings) {
                         cpt.brs.LastY = null;
                         cpt.brs.Buff = [];
                         reset = true;
+                        /*
+                        if (cpt.brs.Slc.indexOf("(Linie)") != -1) {
+                            
+                            alert(cpt.brs.Buff.length);
+                        }
+                        */
                     }
                 }
                 if (!reset) {
