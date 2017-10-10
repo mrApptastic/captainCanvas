@@ -9,9 +9,11 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.set = {
 				"fit" : true,
 				"tog" : true,
-                "key" : true
+                "key" : true,
+				"lan" : window.navigator.language.indexOf("da") != -1
 			  };
 	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur"];
+	// Halvmåne, Pil, Kors, Figur (Kurve), Figur (Bézier)
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
 	cpt.brs = {"Slc" : "Firkant", "Lvl" : 0, "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [] };
 	cpt.drg = false;
@@ -338,6 +340,12 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.id.setAttribute("height",window.innerHeight);
 		cpt.dat();		
 	};
+	cpt.refl = function () {
+		document.getElementsByClassName(cpt.tl.id + "_dataLevelSelect")[0].innerHTML = "";
+		for (let i = 0; i < cpt.dt.length; i++) {
+			document.getElementsByClassName(cpt.tl.id + "_dataLevelSelect")[0].innerHTML += '<option value="' + i + '">' + i + '</option>';
+        }
+	};
 	cpt.rjsn = function(input) {
 		if (input.files && input.files[0]) {
 			var reader = new FileReader();            
@@ -445,14 +453,14 @@ var captainCanvas = function(canvas, tools, settings) {
 		/* Tool Box Contents */
 			/* Heading */
 				cpt.tl.appendChild(document.createElement("h1"));
-                cpt.tl.getElementsByTagName("h1")[0].innerHTML = "V&aelig;rkt&oslash;jer:";
+                cpt.tl.getElementsByTagName("h1")[0].innerHTML =  cpt.set.lan ? "V&aelig;rkt&oslash;jer : " : "Tools : ";
 			/* Brush Heading */
 				var brush = document.createElement("h3");
-				brush.innerHTML = "Pensel :"
+				brush.innerHTML = cpt.set.lan ? "Pensel : " : "Brush : "
 				cpt.tl.appendChild(brush);
 			/* Selected Function */
             	var selectFuncLabel = document.createElement("label");
-				selectFuncLabel.innerHTML = "Funktion: &nbsp;";
+				selectFuncLabel.innerHTML = cpt.set.lan ? "Funktion : &nbsp;" : "Function : &nbsp;";
 				cpt.tl.appendChild(selectFuncLabel);				
 				cpt.tl.appendChild(document.createElement("select"));
 				cpt.tl.getElementsByTagName("select")[0].className = cpt.tl.id + "_selectedFunction";
@@ -464,7 +472,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tl.appendChild(document.createElement("br"));
             /* Selected Height, Width And Linewidth */
             	var heightLabel = document.createElement("label");
-				heightLabel.innerHTML = "H&oslash;jde : &nbsp;";
+				heightLabel.innerHTML = cpt.set.lan ? "H&oslash;jde : &nbsp;" : "Height : &nbsp;";
 				cpt.tl.appendChild(heightLabel);
                 var height = document.createElement("input");
 				height.value = "20";
@@ -596,6 +604,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 document.getElementsByClassName(cpt.tl.id + "_levelToggler")[0].addEventListener("change", function(event) {
                     if (this.checked) {
                         document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0].style.display = "block";
+						cpt.refl();
                     }
                     else {
                         document.getElementsByClassName(cpt.tl.id + "_dataLevelArea")[0].style.display = "none";
@@ -614,13 +623,28 @@ var captainCanvas = function(canvas, tools, settings) {
                 lfs.className = cpt.tl.id + "_dataLevelSelect";
                 lev.appendChild(lfs);
 				var lse = document.getElementsByClassName(cpt.tl.id + "_dataLevelSelect")[0];
-                for (let i = 0; i < cpt.dt.length; i++) {
-                    lse.innerHTML += '<option value="' + i + '">' + i + '</option>';
-                }
+				cpt.refl();
                 lse.addEventListener("change", function (event) {
                     cpt.ix = this.value;
-                    cpt.dat();
                 });
+				var ltb = document.createElement("input");
+                ltb.setAttribute("type", "button");
+				ltb.value = "Tilføj";
+                ltb.className = cpt.tl.id + "_dataLevelAdd";
+                lev.appendChild(ltb);
+				document.getElementsByClassName(cpt.tl.id + "_dataLevelAdd")[0].addEventListener("click", function() {
+						cpt.dt.push([]);
+						cpt.refl();
+				});
+				var ltr = document.createElement("input");
+                ltr.setAttribute("type", "button");
+				ltr.value = "Fjern sidste";
+                ltr.className = cpt.tl.id + "_dataLevelRemove";
+                lev.appendChild(ltr);
+				document.getElementsByClassName(cpt.tl.id + "_dataLevelRemove")[0].addEventListener("click", function() {
+						cpt.dt.pop();
+						cpt.refl();
+				});
 			/* Edit Data Toggler */
                 var dtt = document.createElement("span");
                 dtt.innerHTML = "Rediger Data : ";
