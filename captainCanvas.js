@@ -683,7 +683,7 @@ var captainCanvas = function(canvas, tools, settings) {
 			let chk = document.createElement("input");
 			toggler.id = cpt.tl.id + "_toggleBandit";
 			toggler.style.cssText = "position: fixed; right: 0; bottom: 0; z-index: 99; color: rgba(155,155,155,0.8);";
-			txt.innerHTML = "Gem V&aelig;rkt&oslash;jer";
+			txt.innerHTML = cpt.set.lan ? "Gem V&aelig;rkt&oslash;jer" : "Hide Tools";
 			toggler.appendChild(txt);
 			chk.setAttribute("type", "checkbox");
 			chk.id = cpt.tl.id + "_toolToggler";			
