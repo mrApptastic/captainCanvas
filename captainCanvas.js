@@ -7,9 +7,12 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.ix = 0;
 	cpt.dt = [[]];	
 	cpt.set = {
-				"fit" : true,
-				"tog" : true,
-                "key" : true,
+				"fit" : settings ? (settings.Fit != null ? settings.Fit : true) : true,
+				"tog" : settings ? (settings.Toggle != null ? settings.Toggle : true) : true,
+                "key" : settings ? (settings.Shortcuts != null ? settings.Shortcuts : true) : true,
+                "evt" : settings ? (settings.DefaultEvents != null ? settings.DefaultEvents : true) : true,
+				"cls" : settings ? (settings.Colours != null ? settings.Colours : []) : [],
+				"clw" : settings ? (settings.OverwriteColours != null ? settings.OverwriteColours : false) : false,
 				"lan" : window.navigator.language.indexOf("da") != -1
 			  };
 	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur (Linie)"];
@@ -693,7 +696,9 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tl.style.display = !this.checked ?  "block" : "none";
 			});			
 		}
-		cpt.id.addEventListener("mousemove", function(event) {
+		/* Default Events */
+		if (cpt.set.evt) {
+			cpt.id.addEventListener("mousemove", function(event) {
             cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
 			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc.indexOf("Figur") == -1) {
 				cpt.dim();
@@ -842,6 +847,7 @@ var captainCanvas = function(canvas, tools, settings) {
 		cpt.id.addEventListener("mouseout", function() {
 			cpt.drg = false;
 		});
+		}
 		if (cpt.set.fit) {
 			window.addEventListener("resize", cpt.ref);
 		}
