@@ -648,8 +648,29 @@ var captainCanvas = function(canvas, tools, settings) {
                 ltr.className = cpt.tl.id + "_dataLevelRemove";
                 lev.appendChild(ltr);
 				document.getElementsByClassName(cpt.tl.id + "_dataLevelRemove")[0].addEventListener("click", function() {
+					if (cpt.dt.length > 1) {
 						cpt.dt.pop();
 						cpt.refl();
+					}
+				});
+				var ltu = document.createElement("input");
+                ltu.setAttribute("type", "button");
+				ltu.value = cpt.set.lan ? "Flyt op" : "Move up";
+                ltu.className = cpt.tl.id + "_dataLevelMoveUp";
+                lev.appendChild(ltu);
+				document.getElementsByClassName(cpt.tl.id + "_dataLevelMoveUp")[0].addEventListener("click", function() {
+					if (cpt.dt.length > 1 && cpt.ix != (cpt.dt.length - 1)) {
+						let index = cpt.ix;
+						//alert(cpt.dt[index]);
+						let lvl1 = cpt.dt[index]; //cpt.dt[index] ? JSON.parse(cpt.dt[index]) : [];
+						//alert(lvl1);
+						let lvl2 = cpt.dt[index + 1]; //cpt.dt[cpt.ix + 1] ? JSON.parse(cpt.dt[cpt.ix + 1]) : [];
+						cpt.dt[index] = lvl2;
+						cpt.dt[index + 1] = lvl1;
+						//cpt.dt.splice(index, 2, lvl2, lvl1);
+						// cpt.dt.splice(cpt.ix, 2, cpt.dt[cpt.ix + 1], cpt.dt[cpt.ix]);
+						cpt.refl();
+					}
 				});
 			/* Edit Data Toggler */
                 var dtt = document.createElement("span");
