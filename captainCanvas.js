@@ -1,4 +1,11 @@
 
+/*
+To-do-list:
+- When changing brush the pseudo-brush only changes when moving cursor: Find mouse move event and ad logic to change brush event.
+- Languages: Functions: Bum Bum: Something about changing methods to arrays of objects with translations on.
+- Layers: Loads of issues... To be continues ;-)
+*/
+
 var captainCanvas = function(canvas, tools, settings) {
 	var cpt = this;
 	cpt.id = document.getElementById(canvas);
