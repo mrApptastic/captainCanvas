@@ -89,8 +89,9 @@
 				box.slide = false;
 			}
 		});
-		window.addEventListener("mousemove", function(event) {
+		window.addEventListener("mousemove", function(event) {			
 			if (box.slide == true) {
+				event.preventDefault();
 				box.set.wth = (window.innerWidth -  event.pageX - 16);
 				box.elem.style.width = box.set.wth + "px";
 			}
