@@ -30,8 +30,8 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.drw = function(event) {
         var z = [];
         var f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
-		var x = event.pageX - cpt.id.offsetLeft;
-		var y = event.pageY - cpt.id.offsetTop;
+		var x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX) // cpt.id.offsetLeft;
+		var y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); //cpt.id.offsetTop;
 		var w = parseInt(cpt.brs.Wth);
 		var h = parseInt(cpt.brs.Hgt);
         var s =  0;
@@ -734,8 +734,8 @@ var captainCanvas = function(canvas, tools, settings) {
 			}
 			else if (cpt.brs.Slc == "Linie") {
 				if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
-					let x = event.pageX - cpt.id.offsetLeft;
-					let y = event.pageY - cpt.id.offsetTop;
+					let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.id.offsetLeft;
+					let y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.id.offsetTop;
 					cpt.dim();
 					cpt.dat();					  
 					cpt.drafi("lineTo", x, y);
@@ -745,8 +745,8 @@ var captainCanvas = function(canvas, tools, settings) {
 			}
             else if (cpt.brs.Slc.indexOf("Figur") != -1) {
                 if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
-					let x = event.pageX - cpt.id.offsetLeft;
-					let y = event.pageY - cpt.id.offsetTop;
+					let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.id.offsetLeft;
+					let y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.id.offsetTop;
 					cpt.dim();
 					cpt.dat();
                     for (let i = 0; i < cpt.brs.Buff.length; i++) {
@@ -777,8 +777,8 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.drw(event);
 			}
 			else if (cpt.brs.Slc == "Linie") {
-				let x = event.pageX - cpt.id.offsetLeft;
-				let y = event.pageY - cpt.id.offsetTop;
+				let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.id.offsetLeft;
+				let y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.id.offsetTop;
 				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
 					cpt.dt[cpt.ix].push({"Fct" : "beginPath" });
 					cpt.dt[cpt.ix].push({"Fct" : "moveTo", "X" : x, "Y" : y });
@@ -795,8 +795,10 @@ var captainCanvas = function(canvas, tools, settings) {
 				}
 			}            
             else if (cpt.brs.Slc.indexOf("Figur") != -1) {
-                let x = event.pageX - cpt.id.offsetLeft;
-				let y = event.pageY - cpt.id.offsetTop;
+				let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX);
+				let y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY);
+                // let x = event.pageX - cpt.id.offsetLeft;
+				// let y = event.pageY - cpt.id.offsetTop;
                 let reset = false;
                 
                 if (cpt.brs.Buff.length > 0) {
