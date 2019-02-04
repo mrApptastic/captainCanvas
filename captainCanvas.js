@@ -1,13 +1,19 @@
-
 /*
 To-do-list:
-- When changing brush the pseudo-brush only changes when moving cursor: Find mouse move event and ad logic to change brush event.
+- When changing brush the pseudo-brush only changes when moving cursor: Find mouse move event and ad logic to change brush event. DONE. Now needs testing.
 - Languages: Functions: Bum Bum: Something about changing methods to arrays of objects with translations on.
 - Menu: Option to collapse more.
+- Delete: Maybe delete top-object, which is being clicked on?
+- Capture object: Click on object, remove it from canvas and 
+- Add ids and functions to canvas code.
 - Layers:
 	- Test and fix splice issues 
 	- Enable load json file as layers.
+	- Move Objects on layer
 	- Loads of other issues...
+- HTML Export: Bug! Only he selected layer is exported...
+- Save: Perhaps save work to local storage;	
+- Steps Back-Buffer.
 */
 
 var captainCanvas = function(canvas, tools, settings) {
@@ -24,18 +30,19 @@ var captainCanvas = function(canvas, tools, settings) {
                 "evt" : settings ? (settings.DefaultEvents != null ? settings.DefaultEvents : true) : true,
 				"cls" : settings ? (settings.Colours != null ? settings.Colours : []) : [],
 				"clw" : settings ? (settings.OverwriteColours != null ? settings.OverwriteColours : false) : false,
-				"lan" : window.navigator.language.indexOf("da") != -1
+				"lan" : window.navigator.language.indexOf("da") != -1,
+				"foc" : false
 			  };
 	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur (Linie)"];
 	// Halvmåne, Pil, Kors, Figur (Kurve), Figur (Bézier)
     cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-	cpt.brs = {"Slc" : "Firkant", "Lvl" : 0, "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [] };
+	cpt.brs = {"Slc" : "Firkant", "Lvl" : 0, "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [], "CursX" : 0, "CursY" : 0 };
 	cpt.drg = false;
-	cpt.drw = function(event) {
+	cpt.drw = function(mrX, mrY) {
         var z = [];
         var f = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
-		var x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX) // cpt.id.offsetLeft;
-		var y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); //cpt.id.offsetTop;
+		var x = mrX - (cpt.id.getBoundingClientRect().left + window.scrollX) // cpt.id.offsetLeft;
+		var y = mrY - (cpt.id.getBoundingClientRect().top + window.scrollY); //cpt.id.offsetTop;
 		var w = parseInt(cpt.brs.Wth);
 		var h = parseInt(cpt.brs.Hgt);
         var s =  0;
@@ -223,6 +230,7 @@ var captainCanvas = function(canvas, tools, settings) {
 			cpt.dt[cpt.ix].push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
 		}		
 	};
+	
 	cpt.cst = function() {
 		var stroke = document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value;
 		cpt.brs.Str = stroke;
@@ -463,7 +471,57 @@ var captainCanvas = function(canvas, tools, settings) {
 			l.click();
 		}
 	};
+	cpt.moveMouse = function (mrX, mrY) {
+		    cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
+			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc.indexOf("Figur") == -1) {
+				cpt.dim();
+				cpt.drw(mrX, mrY);
+			}
+			else if (cpt.brs.Slc == "Linie") {
+				if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
+					let x = mrX - (cpt.id.getBoundingClientRect().left + window.scrollX);
+					let y = mrY - (cpt.id.getBoundingClientRect().top + window.scrollY);
+					cpt.dim();
+					cpt.dat();					  
+					cpt.drafi("lineTo", x, y);
+					cpt.drafi("closePath");
+					cpt.drafi("stroke");
+				}
+			}
+            else if (cpt.brs.Slc.indexOf("Figur") != -1) {
+                if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
+					let x = mrX - (cpt.id.getBoundingClientRect().left + window.scrollX);
+					let y = mrY - (cpt.id.getBoundingClientRect().top + window.scrollY);
+					cpt.dim();
+					cpt.dat();
+                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
+                        cpt.drafi(cpt.brs.Buff[i].Fct, 
+					        cpt.brs.Buff[i].X, 
+					        cpt.brs.Buff[i].Y
+				        );
+                    }					  
+					cpt.drafi("lineTo", x, y);
+					cpt.drafi("closePath");
+					cpt.drafi("stroke");
+                    if (cpt.brs.Buff.length > 0) {
+                        if (x >= (cpt.brs.Buff[1].X - 5) && x <= (cpt.brs.Buff[1].X + 5) && y >= (cpt.brs.Buff[1].Y - 5) && y <= (cpt.brs.Buff[1].Y + 5)) {
+                            // cpt.drafi("fillRect", x, y, 25, 25);
+                            cpt.drafi("closePath");
+                            cpt.drafi("fill");
+                            cpt.drafi("stroke");                       
+                        }
+                    }
+				}                
+            }
+	};
 	cpt.init = function () {
+		/* Init toggle in-out toolBox */
+		cpt.tl.addEventListener("mouseenter", function() {
+			cpt.set.foc = true;
+		});
+		cpt.tl.addEventListener("mouseleave", function() {
+			cpt.set.foc = false;
+		});
         /* Hide cursor when above drawing area */
                 // cpt.id.style.cursor = "none";
                 // cpt.id.style.webkitCursor = "none";
@@ -731,54 +789,17 @@ var captainCanvas = function(canvas, tools, settings) {
 		/* Default Events */
 		if (cpt.set.evt) {
 			cpt.id.addEventListener("mousemove", function(event) {
-            cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
-			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc.indexOf("Figur") == -1) {
-				cpt.dim();
-				cpt.drw(event);
-			}
-			else if (cpt.brs.Slc == "Linie") {
-				if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
-					let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.id.offsetLeft;
-					let y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.id.offsetTop;
-					cpt.dim();
-					cpt.dat();					  
-					cpt.drafi("lineTo", x, y);
-					cpt.drafi("closePath");
-					cpt.drafi("stroke");
-				}
-			}
-            else if (cpt.brs.Slc.indexOf("Figur") != -1) {
-                if (cpt.brs.LastX != null || cpt.brs.LastY != null) {
-					let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.id.offsetLeft;
-					let y = event.pageY - (cpt.id.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.id.offsetTop;
-					cpt.dim();
-					cpt.dat();
-                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
-                        cpt.drafi(cpt.brs.Buff[i].Fct, 
-					        cpt.brs.Buff[i].X, 
-					        cpt.brs.Buff[i].Y
-				        );
-                    }					  
-					cpt.drafi("lineTo", x, y);
-					cpt.drafi("closePath");
-					cpt.drafi("stroke");
-                    if (cpt.brs.Buff.length > 0) {
-                        if (x >= (cpt.brs.Buff[1].X - 5) && x <= (cpt.brs.Buff[1].X + 5) && y >= (cpt.brs.Buff[1].Y - 5) && y <= (cpt.brs.Buff[1].Y + 5)) {
-                            // cpt.drafi("fillRect", x, y, 25, 25);
-                            cpt.drafi("closePath");
-                            cpt.drafi("fill");
-                            cpt.drafi("stroke");                       
-                        }
-                    }
-				}                
-            }
+				cpt.moveMouse(event.pageX, event.pageY);
+				/* Update Cursor */
+				cpt.brs.CursX = event.pageX;
+				cpt.brs.CursY = event.pageY;
 		});
 		cpt.id.addEventListener("mousedown", function(event) { 
 			cpt.drg = true;	
             cpt.brs.Slc = document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value;
 			if (cpt.brs.Slc != "Linie" && cpt.brs.Slc.indexOf("Figur") == -1) {				
 				cpt.dim();
-				cpt.drw(event);
+				cpt.drw(event.pageX, event.pageY);
 			}
 			else if (cpt.brs.Slc == "Linie") {
 				let x = event.pageX - (cpt.id.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.id.offsetLeft;
@@ -886,23 +907,29 @@ var captainCanvas = function(canvas, tools, settings) {
 			window.addEventListener("resize", cpt.ref);
 		}
         if (cpt.set.key) {           
-            window.addEventListener("keydown", function (event) {
-                var k = event.keyCode;
-                switch (k) {
-                    case 81 : document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) > 0 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) - 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
-                    case 65 : document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) < cpt.fct.length - 1 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) + 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
-                    case 87 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
-                    case 83 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) + 1; break;
-                    case 69 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) - 1; break;
-                    case 68 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) + 1; break;
-					case 82 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) > 0 ? parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) - 1 : parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value); cpt.clw(); break;                    
-                    case 70 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) + 1; cpt.clw(); break;                    
-                    case 84 : document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
-                    case 71 : document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
-                    case 89 : document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;
-                    case 72 : document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;				
-                }
-            })
+            window.addEventListener("keydown", function (event) {		
+				if (!cpt.set.foc) {
+					var k = event.keyCode;
+					switch (k) {
+						case 81 : document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) > 0 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) - 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
+						case 65 : document.getElementsByClassName(cpt.tl.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) < cpt.fct.length - 1 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) + 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
+						case 87 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) - 1; break;
+						case 83 : document.getElementsByClassName(cpt.tl.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_height")[0].value) + 1; break;
+						case 69 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) - 1; break;
+						case 68 : document.getElementsByClassName(cpt.tl.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_width")[0].value) + 1; break;
+						case 82 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) > 0 ? parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) - 1 : parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value); cpt.clw(); break;                    
+						case 70 : document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tl.id + "_lineWidth")[0].value) + 1; cpt.clw(); break;                    
+						case 84 : document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
+						case 71 : document.getElementsByClassName(cpt.tl.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
+						case 89 : document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;
+						case 72 : document.getElementsByClassName(cpt.tl.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;				
+					}
+					
+					cpt.dat();
+					cpt.moveMouse(cpt.brs.CursX,cpt.brs.CursY);
+					// cpt.id.dispatchEvent(new Event("mousemove"));
+				}
+            });
         }
 		cpt.ref();	
 		cpt.cls();
