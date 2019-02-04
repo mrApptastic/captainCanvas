@@ -3,7 +3,11 @@
 To-do-list:
 - When changing brush the pseudo-brush only changes when moving cursor: Find mouse move event and ad logic to change brush event.
 - Languages: Functions: Bum Bum: Something about changing methods to arrays of objects with translations on.
-- Layers: Loads of issues... To be continues ;-)
+- Menu: Option to collapse more.
+- Layers:
+	- Test and fix splice issues 
+	- Enable load json file as layers.
+	- Loads of other issues...
 */
 
 var captainCanvas = function(canvas, tools, settings) {
