@@ -1,3 +1,4 @@
+
 /*
 To-do-list:
 - When changing brush the pseudo-brush only changes when moving cursor: Find mouse move event and ad logic to change brush event. DONE. Now needs testing.
@@ -11,7 +12,7 @@ To-do-list:
 	- Enable load json file as layers.
 	- Move Objects on layer
 	- Loads of other issues...
-- HTML Export: Bug! Only he selected layer is exported...
+- HTML Export: Bug! Only the selected layer is exported...
 - Save: Perhaps save work to local storage;	
 - Steps Back-Buffer.
 */
@@ -82,8 +83,8 @@ var captainCanvas = function(canvas, tools, settings) {
 				thisy = y + Math.sin(rot) * outerRadius;
 				z.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
 				rot += step
-				thisx=x + Math.cos(rot) * innerRadius;
-				thisy=y + Math.sin(rot) * innerRadius;
+				thisx = x + Math.cos(rot) * innerRadius;
+				thisy = y + Math.sin(rot) * innerRadius;
 				z.push({"Fct" : "lineTo", "X" : thisx, "Y" : thisy});
 				rot += step
 			}
@@ -373,8 +374,18 @@ var captainCanvas = function(canvas, tools, settings) {
 			var reader = new FileReader();            
             reader.onload = function (e) {
 				try {
-					cpt.dt = JSON.parse(e.target.result);
-					cpt.ref();
+					let newArr = JSON.parse(e.target.result);
+					let concato = true;
+					
+					if (Array.isArray(newArr)) {
+						if(concato) {
+							cpt.dt = cpt.dt.concat(newArr);													
+						}
+						else {
+							cpt.dt = newArr;
+						}
+						cpt.ref();
+					}										
 				}
 				catch (e) {
 					alert(e);
