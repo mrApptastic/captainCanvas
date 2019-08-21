@@ -15,6 +15,7 @@ To-do-list:
 - HTML Export: Bug! Only the selected layer is exported...
 - Save: Perhaps save work to local storage;	
 - Steps Back-Buffer.
+- New drawing functions: // Halvmåne, Pil, Kors, Figur (Kurve), Figur (Bézier)
 */
 
 var captainCanvas = function(canvas, tools, settings) {
@@ -24,7 +25,7 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.context = cpt.elem.getContext("2d");
 	cpt.index = 0;
 	cpt.data = [[]];	
-	cpt.set = {
+	cpt.settings = {
 				"fit" : settings ? (settings.Fit !== null ? settings.Fit : true) : true,
 				"tog" : settings ? (settings.Toggle !== null ? settings.Toggle : true) : false,
                 "key" : settings ? (settings.Shortcuts !== null ? settings.Shortcuts : true) : true,
@@ -34,18 +35,17 @@ var captainCanvas = function(canvas, tools, settings) {
 				"lan" : window.navigator.language.indexOf("da") !== -1,
 				"foc" : false
 			  };
-	cpt.fct = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur (Linie)"];
-	// Halvmåne, Pil, Kors, Figur (Kurve), Figur (Bézier)
-    cpt.col = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
-	cpt.brs = {"Slc" : "Firkant", "Lvl" : 0, "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [], "CursX" : 0, "CursY" : 0 };
+	cpt.methods = ["Firkant (Fyld)","Firkant (Streg)", "Firkant", "Cirkel", "Stjerne", "Trekant", "Trekant (Ret)", "Rhombe", "Trapezoid", "Ellipse", "Smiley", "Hjerte", "Linie", "Figur (Linie)"];
+    cpt.colours = ["AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine", "Azure", "Beige", "Bisque", "Black", "BlanchedAlmond", "Blue", "BlueViolet", "Brown", "BurlyWood", "CadetBlue", "Chartreuse", "Chocolate", "Coral", "CornflowerBlue", "Cornsilk", "Crimson", "Cyan", "DarkBlue", "DarkCyan", "DarkGoldenRod", "DarkGray", "DarkGrey", "DarkGreen", "DarkKhaki", "DarkMagenta", "DarkOliveGreen", "DarkOrange", "DarkOrchid", "DarkRed", "DarkSalmon", "DarkSeaGreen", "DarkSlateBlue", "DarkSlateGray", "DarkSlateGrey", "DarkTurquoise", "DarkViolet", "DeepPink", "DeepSkyBlue", "DimGray", "DimGrey", "DodgerBlue", "FireBrick", "FloralWhite", "ForestGreen", "Fuchsia", "Gainsboro", "GhostWhite", "Gold", "GoldenRod", "Gray", "Grey", "Green", "GreenYellow", "HoneyDew", "HotPink", "IndianRed ", "Indigo ", "Ivory", "Khaki", "Lavender", "LavenderBlush", "LawnGreen", "LemonChiffon", "LightBlue", "LightCoral", "LightCyan", "LightGoldenRodYellow", "LightGray", "LightGrey", "LightGreen", "LightPink", "LightSalmon", "LightSeaGreen", "LightSkyBlue", "LightSlateGray", "LightSlateGrey", "LightSteelBlue", "LightYellow", "Lime", "LimeGreen", "Linen", "Magenta", "Maroon", "MediumAquaMarine", "MediumBlue", "MediumOrchid", "MediumPurple", "MediumSeaGreen", "MediumSlateBlue", "MediumSpringGreen", "MediumTurquoise", "MediumVioletRed", "MidnightBlue", "MintCream", "MistyRose", "Moccasin", "NavajoWhite", "Navy", "OldLace", "Olive", "OliveDrab", "Orange", "OrangeRed", "Orchid", "PaleGoldenRod", "PaleGreen", "PaleTurquoise", "PaleVioletRed", "PapayaWhip", "PeachPuff", "Peru", "Pink", "Plum", "PowderBlue", "Purple", "RebeccaPurple", "Red", "RosyBrown", "RoyalBlue", "SaddleBrown", "Salmon", "SandyBrown", "SeaGreen", "SeaShell", "Sienna", "Silver", "SkyBlue", "SlateBlue", "SlateGray", "SlateGrey", "Snow", "SpringGreen", "SteelBlue", "Tan", "Teal", "Thistle", "Tomato", "Transparent", "Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow", "YellowGreen"];
+	cpt.brush = {"Slc" : "Firkant", "Lvl" : 0, "Hgt" : 10, "Wth" : 10, "Fil" : "Black", "Str" : "Transparent", "LastX" : null, "LastY" : null, "Step" : 0, "Buff" : [], "CursX" : 0, "CursY" : 0 };
 	cpt.drg = false;
 	cpt.drw = function(mrX, mrY) {
         var z = [];
         var f = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
 		var x = mrX - (cpt.elem.getBoundingClientRect().left + window.scrollX);
 		var y = mrY - (cpt.elem.getBoundingClientRect().top + window.scrollY);
-		var w = parseInt(cpt.brs.Wth);
-		var h = parseInt(cpt.brs.Hgt);
+		var w = parseInt(cpt.brush.Wth);
+		var h = parseInt(cpt.brush.Hgt);
         var s =  0;
         var e =  2 * Math.PI;
         if (f === "Firkant (Fyld)") {
@@ -218,33 +218,33 @@ var captainCanvas = function(canvas, tools, settings) {
 	};
 	cpt.cfl = function() {
 		var fill = document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].value;
-		cpt.brs.Fil = fill;
+		cpt.brush.Fil = fill;
 		if (cpt.data[cpt.index].length > 0) {
 			if (cpt.data[cpt.index][cpt.data[cpt.index].length - 1].Fct !== "fillStyle") {
-				cpt.data[cpt.index].push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+				cpt.data[cpt.index].push({"Fct" : "fillStyle", "Value" : cpt.brush.Fil});
 			}
 			else {
-				cpt.data[cpt.index][cpt.data[cpt.index].length - 1].Value = cpt.brs.Fil;
+				cpt.data[cpt.index][cpt.data[cpt.index].length - 1].Value = cpt.brush.Fil;
 			}
 		}
 		else {
-			cpt.data[cpt.index].push({"Fct" : "fillStyle", "Value" : cpt.brs.Fil});
+			cpt.data[cpt.index].push({"Fct" : "fillStyle", "Value" : cpt.brush.Fil});
 		}		
 	};
 	
 	cpt.cst = function() {
 		var stroke = document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].value;
-		cpt.brs.Str = stroke;
+		cpt.brush.Str = stroke;
 		if (cpt.data[cpt.index].length > 0) {
 			if (cpt.data[cpt.index][cpt.data[cpt.index].length - 1].Fct !== "strokeStyle") {
-				cpt.data[cpt.index].push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+				cpt.data[cpt.index].push({"Fct" : "strokeStyle", "Value" : cpt.brush.Str});
 			}
 			else {
-				cpt.data[cpt.index][cpt.data[cpt.index].length - 1].Value = cpt.brs.Str;
+				cpt.data[cpt.index][cpt.data[cpt.index].length - 1].Value = cpt.brush.Str;
 			}
 		}
 		else {
-			cpt.data[cpt.index].push({"Fct" : "strokeStyle", "Value" : cpt.brs.Str});
+			cpt.data[cpt.index].push({"Fct" : "strokeStyle", "Value" : cpt.brush.Str});
 		}		
 	};
 	cpt.clw = function() {
@@ -272,10 +272,10 @@ var captainCanvas = function(canvas, tools, settings) {
         var height = document.getElementsByClassName(cpt.tools.id + "_height")[0].value;
         var width =  document.getElementsByClassName(cpt.tools.id + "_width")[0].value;		
         if (!isNaN(height)) {
-            cpt.brs.Hgt = height;
+            cpt.brush.Hgt = height;
         }
         if (!isNaN(width)) {
-            cpt.brs.Wth = width;
+            cpt.brush.Wth = width;
         }
     };
 	cpt.dat = function () {  
@@ -312,49 +312,49 @@ var captainCanvas = function(canvas, tools, settings) {
 		 
 	};
     cpt.drafi = function (f, x, y, w, h, v, s, e, a, c, o, t, m, r, x2, y2, cx, cy, cx2, cy2, ry, rt, aw) {
-		if (f == "strokeStyle" || f == "fillStyle" || f == "shadowOffsetX" || f == "shadowOffsetY" || f == "shadowBlur" || f == "shadowColor" || f == "font" || f == "textAlign" || f == "textBaseline" || f == "globalAlpha" || f == "globalCompositeOperation" || f == "lineWidth" || f == "lineCap" || f == "lineJoin" || f == "miterLimit") {
+		if (f == "strokeStyle" || f === "fillStyle" || f === "shadowOffsetX" || f === "shadowOffsetY" || f === "shadowBlur" || f === "shadowColor" || f == "font" || f == "textAlign" || f === "textBaseline" || f === "globalAlpha" || f === "globalCompositeOperation" || f === "lineWidth" || f === "lineCap" || f === "lineJoin" || f === "miterLimit") {
 			cpt.context[f] = v;
 		}
-		else if (f == "save" || f == "restore" || f == "beginPath" || f == "closePath" || f == "fill" || f == "stroke" || f == "clip") {
+		else if (f === "save" || f === "restore" || f === "beginPath" || f === "closePath" || f === "fill" || f === "stroke" || f === "clip") {
 			cpt.context[f]();	
 		}
-        else if (f == "rotate") {
+        else if (f === "rotate") {
             cpt.context[f](a);
         }
-		else if (f == "moveTo" || f == "lineTo" || f == "scale" || f == "translate") {
+		else if (f === "moveTo" || f === "lineTo" || f === "scale" || f === "translate") {
 			cpt.context[f](x, y);		
 		}
-        else if (f == "addColorStop") {
+        else if (f === "addColorStop") {
  			cpt.context[f](o, c);           
         }
-		else if (f == "fillRect" || f == "strokeRect" || f == "rect" || f == "clearRect") {
+		else if (f === "fillRect" || f === "strokeRect" || f === "rect" || f === "clearRect") {
 			cpt.context[f](x, y, w, h);
 		}
-        else if (f == "fillText" || f == "strokeText") {
+        else if (f === "fillText" || f === "strokeText") {
  			cpt.context[f](t, x, y, m); 			
         }
-		else if (f == "arc") {
+		else if (f === "arc") {
 			cpt.context[f](x, y, w, s, e, aw);
 		}
-        else if (f == "arcTo") {
+        else if (f === "arcTo") {
     		cpt.context[f](x, y, x2, y2, r);        
         }
-		else if (f == "ellipse") {
+		else if (f === "ellipse") {
     		cpt.context[f](x, y, r, ry, rt, s, e, aw);        
         }
-        else if (f == "quadraticCurveTo") {
+        else if (f === "quadraticCurveTo") {
        		cpt.context[f](cx, cy, x, y);          
         } 
-        else if (f == "bezierCurveTo") {
+        else if (f === "bezierCurveTo") {
 			cpt.context[f](cx, cy, cx2, cy2, x, y);             
         }   
-        else if (f == "drawImage") {
+        else if (f === "drawImage") {
             
         }
-        else if (f == "putImageData") {
+        else if (f === "putImageData") {
             
         }
-        else if (f == "transform" || f == "setTransform") {
+        else if (f === "transform" || f === "setTransform") {
             
         }
     };
@@ -483,13 +483,13 @@ var captainCanvas = function(canvas, tools, settings) {
 		}
 	};
 	cpt.moveMouse = function (mrX, mrY) {
-		    cpt.brs.Slc = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
-			if (cpt.brs.Slc !== "Linie" && cpt.brs.Slc.indexOf("Figur") === -1) {
+		    cpt.brush.Slc = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
+			if (cpt.brush.Slc !== "Linie" && cpt.brush.Slc.indexOf("Figur") === -1) {
 				cpt.dim();
 				cpt.drw(mrX, mrY);
 			}
-			else if (cpt.brs.Slc === "Linie") {
-				if (cpt.brs.LastX !== null || cpt.brs.LastY !== null) {
+			else if (cpt.brush.Slc === "Linie") {
+				if (cpt.brush.LastX !== null || cpt.brush.LastY !== null) {
 					let x = mrX - (cpt.elem.getBoundingClientRect().left + window.scrollX);
 					let y = mrY - (cpt.elem.getBoundingClientRect().top + window.scrollY);
 					cpt.dim();
@@ -499,23 +499,23 @@ var captainCanvas = function(canvas, tools, settings) {
 					cpt.drafi("stroke");
 				}
 			}
-            else if (cpt.brs.Slc.indexOf("Figur") !== -1) {
-				if (cpt.brs.LastX !== null || cpt.brs.LastY !== null) {
+            else if (cpt.brush.Slc.indexOf("Figur") !== -1) {
+				if (cpt.brush.LastX !== null || cpt.brush.LastY !== null) {
 					let x = mrX - (cpt.elem.getBoundingClientRect().left + window.scrollX);
 					let y = mrY - (cpt.elem.getBoundingClientRect().top + window.scrollY);
 					cpt.dim();
 					cpt.dat();
-                    for (let i = 0; i < cpt.brs.Buff.length; i++) {
-                        cpt.drafi(cpt.brs.Buff[i].Fct, 
-					        cpt.brs.Buff[i].X, 
-					        cpt.brs.Buff[i].Y
+                    for (let i = 0; i < cpt.brush.Buff.length; i++) {
+                        cpt.drafi(cpt.brush.Buff[i].Fct, 
+					        cpt.brush.Buff[i].X, 
+					        cpt.brush.Buff[i].Y
 				        );
                     }					  
 					cpt.drafi("lineTo", x, y);
 					cpt.drafi("closePath");
 					cpt.drafi("stroke");
-                    if (cpt.brs.Buff.length > 0) {
-                        if (x >= (cpt.brs.Buff[1].X - 5) && x <= (cpt.brs.Buff[1].X + 5) && y >= (cpt.brs.Buff[1].Y - 5) && y <= (cpt.brs.Buff[1].Y + 5)) {
+                    if (cpt.brush.Buff.length > 0) {
+                        if (x >= (cpt.brush.Buff[1].X - 5) && x <= (cpt.brush.Buff[1].X + 5) && y >= (cpt.brush.Buff[1].Y - 5) && y <= (cpt.brush.Buff[1].Y + 5)) {
                             // cpt.drafi("fillRect", x, y, 25, 25);
                             cpt.drafi("closePath");
                             cpt.drafi("fill");
@@ -528,10 +528,10 @@ var captainCanvas = function(canvas, tools, settings) {
 	cpt.init = function () {
 		/* Init toggle in-out toolBox */
 		cpt.tools.addEventListener("mouseenter", function() {
-			cpt.set.foc = true;
+			cpt.settings.foc = true;
 		});
 		cpt.tools.addEventListener("mouseleave", function() {
-			cpt.set.foc = false;
+			cpt.settings.foc = false;
 		});
         /* Hide cursor when above drawing area */
         		// cpt.elem.style.cursor = "none";
@@ -539,18 +539,18 @@ var captainCanvas = function(canvas, tools, settings) {
 		/* Tool Box Contents */
 			/* Heading */
 				cpt.tools.appendChild(document.createElement("h1"));
-                cpt.tools.getElementsByTagName("h1")[0].innerHTML =  cpt.set.lan ? "V&aelig;rkt&oslash;jer : " : "Tools : ";
+                cpt.tools.getElementsByTagName("h1")[0].innerHTML =  cpt.settings.lan ? "V&aelig;rkt&oslash;jer : " : "Tools : ";
 			/* Brush Heading */
 				var brush = document.createElement("h3");
-				brush.innerHTML = cpt.set.lan ? "Pensel : " : "Brush : "
+				brush.innerHTML = cpt.settings.lan ? "Pensel : " : "Brush : "
 				cpt.tools.appendChild(brush);
 			/* Selected Function */
             	var selectFuncLabel = document.createElement("label");
-				selectFuncLabel.innerHTML = cpt.set.lan ? "Funktion : &nbsp;" : "Function : &nbsp;";
+				selectFuncLabel.innerHTML = cpt.settings.lan ? "Funktion : &nbsp;" : "Function : &nbsp;";
 				cpt.tools.appendChild(selectFuncLabel);				
 				cpt.tools.appendChild(document.createElement("select"));
 				cpt.tools.getElementsByTagName("select")[0].className = cpt.tools.id + "_selectedFunction";
-				var funky = cpt.fct.sort();
+				var funky = cpt.methods.sort();
 				for (let i = 0; i < funky.length; i++) {
 					document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].innerHTML += "<option value='" + funky[i] + "'>" + funky[i] + "</option>";
 				}
@@ -558,7 +558,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tools.appendChild(document.createElement("br"));
             /* Selected Height, Width And Linewidth */
             	var heightLabel = document.createElement("label");
-				heightLabel.innerHTML = cpt.set.lan ? "H&oslash;jde : &nbsp;" : "Height : &nbsp;";
+				heightLabel.innerHTML = cpt.settings.lan ? "H&oslash;jde : &nbsp;" : "Height : &nbsp;";
 				cpt.tools.appendChild(heightLabel);
                 var height = document.createElement("input");
 				height.value = "20";
@@ -568,7 +568,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 // document.getElementsByClassName(cpt.tools.id + "_height")[0].addEventListener("change", cpt.dim);
                 cpt.tools.appendChild(document.createElement("br"));
                 var widthLabel = document.createElement("label");
-				widthLabel.innerHTML = cpt.set.lan ? "Bredde : &nbsp;" : "Width : &nbsp;";
+				widthLabel.innerHTML = cpt.settings.lan ? "Bredde : &nbsp;" : "Width : &nbsp;";
 				cpt.tools.appendChild(widthLabel);	
                 var width = document.createElement("input");
 				width.value = "20";
@@ -578,7 +578,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 // document.getElementsByClassName(cpt.tools.id + "_width")[0].addEventListener("change", cpt.dim);
                 cpt.tools.appendChild(document.createElement("br"));
 				var linewidthLabel = document.createElement("label");
-				linewidthLabel.innerHTML = cpt.set.lan ? "Linie : &nbsp;" : "Line : &nbsp;";
+				linewidthLabel.innerHTML = cpt.settings.lan ? "Linie : &nbsp;" : "Line : &nbsp;";
 				cpt.tools.appendChild(linewidthLabel);	
                 var linewidth = document.createElement("input");
 				linewidth.value = "1";
@@ -589,37 +589,37 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tools.appendChild(document.createElement("br"));
             /* Selected Colours*/
                 var selectColLabel = document.createElement("label");
-				selectColLabel.innerHTML = cpt.set.lan ? "Fyldfarve : &nbsp;" : "Fill : &nbsp;";
+				selectColLabel.innerHTML = cpt.settings.lan ? "Fyldfarve : &nbsp;" : "Fill : &nbsp;";
                 cpt.tools.appendChild(selectColLabel);
                 var colSelect = document.createElement("select")
                 colSelect.className = cpt.tools.id + "_selectedFill";
                 cpt.tools.appendChild(colSelect);
-                for (let i = 0; i < cpt.col.length; i++) {
-                    document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
+                for (let i = 0; i < cpt.colours.length; i++) {
+                    document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].innerHTML += "<option style='background: " + cpt.colours[i] + " ;' value='" + cpt.colours[i] + "'>" + cpt.colours[i] + "</option>";
                 }
-				document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].getElementsByTagName("option")[cpt.col.indexOf("Black")].setAttribute("selected","");
+				document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].getElementsByTagName("option")[cpt.colours.indexOf("Black")].setAttribute("selected","");
 				document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].addEventListener("change",cpt.cfl);
                 cpt.tools.appendChild(document.createElement("br"));
                 var selectFilLabel = document.createElement("label");
-				selectFilLabel.innerHTML = cpt.set.lan ? "Stregfarve : &nbsp;" : "Stroke : &nbsp;";
+				selectFilLabel.innerHTML = cpt.settings.lan ? "Stregfarve : &nbsp;" : "Stroke : &nbsp;";
                 cpt.tools.appendChild(selectFilLabel);
                 var filSelect = document.createElement("select")
                 filSelect.className = cpt.tools.id + "_selectedStroke";
                 cpt.tools.appendChild(filSelect);
-                for (let i = 0; i < cpt.col.length; i++) {
-                    document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].innerHTML += "<option style='background: " + cpt.col[i] + " ;' value='" + cpt.col[i] + "'>" + cpt.col[i] + "</option>";
+                for (let i = 0; i < cpt.colours.length; i++) {
+                    document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].innerHTML += "<option style='background: " + cpt.colours[i] + " ;' value='" + cpt.colours[i] + "'>" + cpt.colours[i] + "</option>";
                 }
-				document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].getElementsByTagName("option")[cpt.col.indexOf("Transparent")].setAttribute("selected","");
+				document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].getElementsByTagName("option")[cpt.colours.indexOf("Transparent")].setAttribute("selected","");
 				document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].addEventListener("change",cpt.cst);
                 cpt.tools.appendChild(document.createElement("br"));
                 cpt.tools.appendChild(document.createElement("br"));
             /* Import Heading */
 				var imp = document.createElement("h3");
-				imp.innerHTML = cpt.set.lan ? "Hent fil : " : "Load file : "
+				imp.innerHTML = cpt.settings.lan ? "Hent fil : " : "Load file : "
 				cpt.tools.appendChild(imp);
 			/* Import JSON */
 				var importJSONLabel = document.createElement("label");
-				importJSONLabel.innerHTML = cpt.set.lan ? "Hent JSON : &nbsp;" : "Load JSON : &nbsp;";
+				importJSONLabel.innerHTML = cpt.settings.lan ? "Hent JSON : &nbsp;" : "Load JSON : &nbsp;";
 				cpt.tools.appendChild(importJSONLabel);
 				var importJSON = document.createElement("input");
 				// importJSON.value = "Hent JSON";
@@ -633,17 +633,17 @@ var captainCanvas = function(canvas, tools, settings) {
 				cpt.tools.appendChild(document.createElement("br"));
             /* Export Heading */
 				var exp = document.createElement("h3");
-				exp.innerHTML = cpt.set.lan ? "Gem fil : " : "Save file : ";
+				exp.innerHTML = cpt.settings.lan ? "Gem fil : " : "Save file : ";
 				cpt.tools.appendChild(exp);
 			/* Export File Name */
 				var fileName = document.createElement("input");
-				fileName.setAttribute("placeholder", cpt.set.lan ? "Filnavn" : "File Name");
+				fileName.setAttribute("placeholder", cpt.settings.lan ? "Filnavn" : "File Name");
 				fileName.setAttribute("type", "text");
 				fileName.className = cpt.tools.id + "_fileName";
 				cpt.tools.appendChild(fileName);		
 			/* Export JSON */
 				var exportJSON = document.createElement("input");
-				exportJSON.value = cpt.set.lan ? "Gem JSON" : "Save JSON";
+				exportJSON.value = cpt.settings.lan ? "Gem JSON" : "Save JSON";
 				exportJSON.setAttribute("type", "button");
 				exportJSON.className = cpt.tools.id + "_exportJSON";
 				cpt.tools.appendChild(exportJSON);
@@ -652,7 +652,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 			/* Export SVG */
 				var exportSVG = document.createElement("input");
-				exportSVG.value = cpt.set.lan ? "Gem SVG" : "Save SVG";
+				exportSVG.value = cpt.settings.lan ? "Gem SVG" : "Save SVG";
 				exportSVG.setAttribute("type", "button");
 				exportSVG.setAttribute("disabled", "");
 				exportSVG.className = cpt.tools.id + "_exportSVG";
@@ -662,7 +662,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
             /* Export HTML Canvas */
 				var exportHtml = document.createElement("input");
-				exportHtml.value = cpt.set.lan ? "Gem HTML" : "Save HTML";
+				exportHtml.value = cpt.settings.lan ? "Gem HTML" : "Save HTML";
 				exportHtml.setAttribute("type", "button");
 				exportHtml.className = cpt.tools.id + "_exportHtml";
 				cpt.tools.appendChild(exportHtml);
@@ -671,7 +671,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 			/* Export PNG */
 				var exportPNG = document.createElement("input");
-				exportPNG.value = cpt.set.lan ? "Gem PNG" : "Save PNG";
+				exportPNG.value = cpt.settings.lan ? "Gem PNG" : "Save PNG";
 				exportPNG.setAttribute("type", "button");
 				exportPNG.className = cpt.tools.id + "_exportPNG";
 				cpt.tools.appendChild(exportPNG);
@@ -681,7 +681,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tools.appendChild(document.createElement("br"));
 			/* Data Level Area */
                 var lel = document.createElement("span");
-                lel.innerHTML = cpt.set.lan ? "Rediger Niveau : " : "Edit Level : ";
+                lel.innerHTML = cpt.settings.lan ? "Rediger Niveau : " : "Edit Level : ";
                 cpt.tools.appendChild(lel);
                 var ltg = document.createElement("input");
                 ltg.setAttribute("type", "checkbox");                
@@ -702,7 +702,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 cpt.tools.appendChild(ltf);
 				var lev = document.getElementsByClassName(cpt.tools.id + "_dataLevelArea")[0];
 				var lll = document.createElement("span");
-                lll.innerHTML = cpt.set.lan ? "Niveau : " : "Level : ";
+                lll.innerHTML = cpt.settings.lan ? "Niveau : " : "Level : ";
                 lev.appendChild(lll);
                 cpt.tools.appendChild(document.createElement("br"));
 				var lfs = document.createElement("select");
@@ -715,7 +715,7 @@ var captainCanvas = function(canvas, tools, settings) {
                 });
 				var ltb = document.createElement("input");
                 ltb.setAttribute("type", "button");
-				ltb.value = cpt.set.lan ? "Tilføj" : "Add";
+				ltb.value = cpt.settings.lan ? "Tilføj" : "Add";
                 ltb.className = cpt.tools.id + "_dataLevelAdd";
                 lev.appendChild(ltb);
 				document.getElementsByClassName(cpt.tools.id + "_dataLevelAdd")[0].addEventListener("click", function() {
@@ -724,7 +724,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 				var ltr = document.createElement("input");
                 ltr.setAttribute("type", "button");
-				ltr.value = cpt.set.lan ? "Fjern sidste" : "Remove last";
+				ltr.value = cpt.settings.lan ? "Fjern sidste" : "Remove last";
                 ltr.className = cpt.tools.id + "_dataLevelRemove";
                 lev.appendChild(ltr);
 				document.getElementsByClassName(cpt.tools.id + "_dataLevelRemove")[0].addEventListener("click", function() {
@@ -735,7 +735,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 				var ltu = document.createElement("input");
                 ltu.setAttribute("type", "button");
-				ltu.value = cpt.set.lan ? "Flyt op" : "Move up";
+				ltu.value = cpt.settings.lan ? "Flyt op" : "Move up";
                 ltu.className = cpt.tools.id + "_dataLevelMoveUp";
                 lev.appendChild(ltu);
 				document.getElementsByClassName(cpt.tools.id + "_dataLevelMoveUp")[0].addEventListener("click", function() {
@@ -754,7 +754,7 @@ var captainCanvas = function(canvas, tools, settings) {
 				});
 			/* Edit Data Toggler */
                 var dtt = document.createElement("span");
-                dtt.innerHTML = cpt.set.lan ? "Rediger Data : " : "Edit Data : ";
+                dtt.innerHTML = cpt.settings.lan ? "Rediger Data : " : "Edit Data : ";
                 cpt.tools.appendChild(dtt);
                 var dtg = document.createElement("input");
                 dtg.setAttribute("type", "checkbox");                
@@ -780,14 +780,14 @@ var captainCanvas = function(canvas, tools, settings) {
                     cpt.data[cpt.index] = JSON.parse(this.value);
                 });
 		/* Tool Box Toggler */
-		if (cpt.set.tog) {
+		if (cpt.settings.tog) {
 			cpt.tools.style.cssText = "position: fixed; right: 0; top: 0; z-index: 98; width: 30vw;"; // overflow-y : auto;
 			let toggler = document.createElement("span");
 			let txt = document.createElement("span");
 			let chk = document.createElement("input");
 			toggler.id = cpt.tools.id + "_toggleBandit";
 			toggler.style.cssText = "position: fixed; right: 0; bottom: 0; z-index: 99; color: rgba(155,155,155,0.8);";
-			txt.innerHTML = cpt.set.lan ? "Gem V&aelig;rkt&oslash;jer" : "Hide Tools";
+			txt.innerHTML = cpt.settings.lan ? "Gem V&aelig;rkt&oslash;jer" : "Hide Tools";
 			toggler.appendChild(txt);
 			chk.setAttribute("type", "checkbox");
 			chk.id = cpt.tools.id + "_toolToggler";			
@@ -798,82 +798,82 @@ var captainCanvas = function(canvas, tools, settings) {
 			});			
 		}
 		/* Default Events */
-		if (cpt.set.evt) {
+		if (cpt.settings.evt) {
 			cpt.elem.addEventListener("mousemove", function(event) {
 				cpt.moveMouse(event.pageX, event.pageY);
 				/* Update Cursor */
-				cpt.brs.CursX = event.pageX;
-				cpt.brs.CursY = event.pageY;
+				cpt.brush.CursX = event.pageX;
+				cpt.brush.CursY = event.pageY;
 		});
 		cpt.elem.addEventListener("mousedown", function(event) { 
 			cpt.drg = true;	
-            cpt.brs.Slc = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
-			if (cpt.brs.Slc !== "Linie" && cpt.brs.Slc.indexOf("Figur") === -1) {				
+            cpt.brush.Slc = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
+			if (cpt.brush.Slc !== "Linie" && cpt.brush.Slc.indexOf("Figur") === -1) {				
 				cpt.dim();
 				cpt.drw(event.pageX, event.pageY);
 			}
-			else if (cpt.brs.Slc == "Linie") {
+			else if (cpt.brush.Slc == "Linie") {
 				let x = event.pageX - (cpt.elem.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.elem.offsetLeft;
 				let y = event.pageY - (cpt.elem.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.elem.offsetTop;
-				if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
+				if (cpt.brush.LastX == null || cpt.brush.LastY == null) {
 					cpt.data[cpt.index].push({"Fct" : "beginPath" });
 					cpt.data[cpt.index].push({"Fct" : "moveTo", "X" : x, "Y" : y });
-					cpt.brs.LastX = x;
-					cpt.brs.LastY = y;
+					cpt.brush.LastX = x;
+					cpt.brush.LastY = y;
 				}
 				else {
 					cpt.data[cpt.index].push({"Fct" : "lineTo", "X" : x, "Y" : y });	
 					cpt.data[cpt.index].push({"Fct" : "stroke" });
 					cpt.dim();
 					cpt.dat();	
-					cpt.brs.LastX = null;
-					cpt.brs.LastY = null;
+					cpt.brush.LastX = null;
+					cpt.brush.LastY = null;
 				}
 			}            
-            else if (cpt.brs.Slc.indexOf("Figur") !== -1) {
+            else if (cpt.brush.Slc.indexOf("Figur") !== -1) {
 				let x = event.pageX - (cpt.elem.getBoundingClientRect().left + window.scrollX);
 				let y = event.pageY - (cpt.elem.getBoundingClientRect().top + window.scrollY);
                 // let x = event.pageX - cpt.elem.offsetLeft;
 				// let y = event.pageY - cpt.elem.offsetTop;
                 let reset = false;
                 
-                if (cpt.brs.Buff.length > 0) {
-                    // console.log("x : " + x + " y : " + y + " x1 : " + cpt.brs.Buff[1].X + " y1 " + cpt.brs.Buff[1].Y);
-                    if (x >= (cpt.brs.Buff[1].X - 5) && x <= (cpt.brs.Buff[1].X + 5) && y >= (cpt.brs.Buff[1].Y - 5) && y <= (cpt.brs.Buff[1].Y + 5)) {
-					    cpt.brs.Buff.push({"Fct" : "lineTo", "X" : cpt.brs.Buff[1].X, "Y" : cpt.brs.Buff[1].Y });
-                        cpt.brs.Buff.push({"Fct" : "closePath" });
-                        cpt.brs.Buff.push({"Fct" : "stroke" });
-                        cpt.brs.Buff.push({"Fct" : "fill" });	
-                        cpt.data[cpt.index] = cpt.data[cpt.index].concat(cpt.brs.Buff);
+                if (cpt.brush.Buff.length > 0) {
+                    // console.log("x : " + x + " y : " + y + " x1 : " + cpt.brush.Buff[1].X + " y1 " + cpt.brush.Buff[1].Y);
+                    if (x >= (cpt.brush.Buff[1].X - 5) && x <= (cpt.brush.Buff[1].X + 5) && y >= (cpt.brush.Buff[1].Y - 5) && y <= (cpt.brush.Buff[1].Y + 5)) {
+					    cpt.brush.Buff.push({"Fct" : "lineTo", "X" : cpt.brush.Buff[1].X, "Y" : cpt.brush.Buff[1].Y });
+                        cpt.brush.Buff.push({"Fct" : "closePath" });
+                        cpt.brush.Buff.push({"Fct" : "stroke" });
+                        cpt.brush.Buff.push({"Fct" : "fill" });	
+                        cpt.data[cpt.index] = cpt.data[cpt.index].concat(cpt.brush.Buff);
 		                cpt.dat();  
-                        cpt.brs.LastX = null;
-                        cpt.brs.LastY = null;
-                        cpt.brs.Buff = [];
+                        cpt.brush.LastX = null;
+                        cpt.brush.LastY = null;
+                        cpt.brush.Buff = [];
                         reset = true;
                         /*
-                        if (cpt.brs.Slc.indexOf("(Linie)") != -1) {
+                        if (cpt.brush.Slc.indexOf("(Linie)") != -1) {
                             
-                            alert(cpt.brs.Buff.length);
+                            alert(cpt.brush.Buff.length);
                         }
                         */
                     }
                 }
                 if (!reset) {
-                    if (cpt.brs.LastX == null || cpt.brs.LastY == null) {
-					    cpt.brs.Buff.push({"Fct" : "beginPath" });
-					    cpt.brs.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-					    cpt.brs.LastX = x;
-					    cpt.brs.LastY = y;
+                    if (cpt.brush.LastX == null || cpt.brush.LastY == null) {
+					    cpt.brush.Buff.push({"Fct" : "beginPath" });
+					    cpt.brush.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					    cpt.brush.LastX = x;
+					    cpt.brush.LastY = y;
 				    }
 				    else {
-					    cpt.brs.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-                        // cpt.brs.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+					    cpt.brush.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+                        // cpt.brush.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
 					    cpt.dim();
 					    cpt.dat();
-                        for (let i = 0; i < cpt.brs.Buff.length; i++) {
-                            cpt.drafi( cpt.brs.Buff[i].Fct, 
-					        cpt.brs.Buff[i].X, 
-					        cpt.brs.Buff[i].Y
+                        for (let i = 0; i < cpt.brush.Buff.length; i++) {
+                            cpt.drafi( cpt.brush.Buff[i].Fct, 
+					        cpt.brush.Buff[i].X, 
+					        cpt.brush.Buff[i].Y
 				            );
                         }
                         cpt.drafi("stroke");	
@@ -914,30 +914,30 @@ var captainCanvas = function(canvas, tools, settings) {
 			cpt.drg = false;
 		});
 		}
-		if (cpt.set.fit) {
+		if (cpt.settings.fit) {
 			window.addEventListener("resize", cpt.ref);
 		}
-        if (cpt.set.key) {           
+        if (cpt.settings.key) {           
             window.addEventListener("keydown", function (event) {		
-				if (!cpt.set.foc) {
+				if (!cpt.settings.foc) {
 					var k = event.keyCode;
 					switch (k) {
-						case 81 : document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) > 0 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) - 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
-						case 65 : document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value = (parseInt(cpt.fct.indexOf(cpt.brs.Slc)) < cpt.fct.length - 1 ? cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc)) + 1] : cpt.fct[parseInt(cpt.fct.indexOf(cpt.brs.Slc))]); break;
+						case 81 : document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value = (parseInt(cpt.methods.indexOf(cpt.brush.Slc)) > 0 ? cpt.methods[parseInt(cpt.methods.indexOf(cpt.brush.Slc)) - 1] : cpt.methods[parseInt(cpt.methods.indexOf(cpt.brush.Slc))]); break;
+						case 65 : document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value = (parseInt(cpt.methods.indexOf(cpt.brush.Slc)) < cpt.methods.length - 1 ? cpt.methods[parseInt(cpt.methods.indexOf(cpt.brush.Slc)) + 1] : cpt.methods[parseInt(cpt.methods.indexOf(cpt.brush.Slc))]); break;
 						case 87 : document.getElementsByClassName(cpt.tools.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tools.id + "_height")[0].value) - 1; break;
 						case 83 : document.getElementsByClassName(cpt.tools.id + "_height")[0].value = parseInt(document.getElementsByClassName(cpt.tools.id + "_height")[0].value) + 1; break;
 						case 69 : document.getElementsByClassName(cpt.tools.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tools.id + "_width")[0].value) - 1; break;
 						case 68 : document.getElementsByClassName(cpt.tools.id + "_width")[0].value = parseInt(document.getElementsByClassName(cpt.tools.id + "_width")[0].value) + 1; break;
 						case 82 : document.getElementsByClassName(cpt.tools.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tools.id + "_lineWidth")[0].value) > 0 ? parseInt(document.getElementsByClassName(cpt.tools.id + "_lineWidth")[0].value) - 1 : parseInt(document.getElementsByClassName(cpt.tools.id + "_lineWidth")[0].value); cpt.clw(); break;                    
 						case 70 : document.getElementsByClassName(cpt.tools.id + "_lineWidth")[0].value = parseInt(document.getElementsByClassName(cpt.tools.id + "_lineWidth")[0].value) + 1; cpt.clw(); break;                    
-						case 84 : document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
-						case 71 : document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Fil)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Fil))]); cpt.cfl(); break;
-						case 89 : document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) > 0 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) - 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;
-						case 72 : document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].value = (parseInt(cpt.col.indexOf(cpt.brs.Str)) < cpt.col.length - 1 ? cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str)) + 1] : cpt.col[parseInt(cpt.col.indexOf(cpt.brs.Str))]); cpt.cst(); break;				
+						case 84 : document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].value = (parseInt(cpt.colours.indexOf(cpt.brush.Fil)) > 0 ? cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Fil)) - 1] : cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Fil))]); cpt.cfl(); break;
+						case 71 : document.getElementsByClassName(cpt.tools.id + "_selectedFill")[0].value = (parseInt(cpt.colours.indexOf(cpt.brush.Fil)) < cpt.colours.length - 1 ? cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Fil)) + 1] : cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Fil))]); cpt.cfl(); break;
+						case 89 : document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].value = (parseInt(cpt.colours.indexOf(cpt.brush.Str)) > 0 ? cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Str)) - 1] : cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Str))]); cpt.cst(); break;
+						case 72 : document.getElementsByClassName(cpt.tools.id + "_selectedStroke")[0].value = (parseInt(cpt.colours.indexOf(cpt.brush.Str)) < cpt.colours.length - 1 ? cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Str)) + 1] : cpt.colours[parseInt(cpt.colours.indexOf(cpt.brush.Str))]); cpt.cst(); break;				
 					}
 					
 					cpt.dat();
-					cpt.moveMouse(cpt.brs.CursX,cpt.brs.CursY);
+					cpt.moveMouse(cpt.brush.CursX,cpt.brush.CursY);
 					// cpt.elem.dispatchEvent(new Event("mousemove"));
 				}
             });
