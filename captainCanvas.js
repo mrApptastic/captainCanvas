@@ -804,115 +804,126 @@ var captainCanvas = function(canvas, tools, settings) {
 				/* Update Cursor */
 				cpt.brush.CursX = event.pageX;
 				cpt.brush.CursY = event.pageY;
-		});
-		cpt.elem.addEventListener("mousedown", function(event) { 
-			cpt.drg = true;	
-            cpt.brush.Slc = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
-			if (cpt.brush.Slc !== "Linie" && cpt.brush.Slc.indexOf("Figur") === -1) {				
-				cpt.dim();
-				cpt.drw(event.pageX, event.pageY);
-			}
-			else if (cpt.brush.Slc == "Linie") {
-				let x = event.pageX - (cpt.elem.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.elem.offsetLeft;
-				let y = event.pageY - (cpt.elem.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.elem.offsetTop;
-				if (cpt.brush.LastX == null || cpt.brush.LastY == null) {
-					cpt.data[cpt.index].push({"Fct" : "beginPath" });
-					cpt.data[cpt.index].push({"Fct" : "moveTo", "X" : x, "Y" : y });
-					cpt.brush.LastX = x;
-					cpt.brush.LastY = y;
+			});
+			cpt.elem.addEventListener("touchmove", function(event) {
+				for (const evt of event.touches) {
+					event.preventDefault();
+					cpt.drg = true;	
+					cpt.moveMouse(evt.clientX, evt.clientY);
+					/* Update Cursor */
+					cpt.brush.CursX = evt.clientX;
+					cpt.brush.CursY = evt.clientY;
+					cpt.drg = false;	
+				}
+			});
+			cpt.elem.addEventListener("mousedown", function(event) { 
+				cpt.drg = true;	
+				cpt.brush.Slc = document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value;
+				if (cpt.brush.Slc !== "Linie" && cpt.brush.Slc.indexOf("Figur") === -1) {				
+					cpt.dim();
+					cpt.drw(event.pageX, event.pageY);
+				}
+				else if (cpt.brush.Slc == "Linie") {
+					let x = event.pageX - (cpt.elem.getBoundingClientRect().left + window.scrollX); // event.pageX - cpt.elem.offsetLeft;
+					let y = event.pageY - (cpt.elem.getBoundingClientRect().top + window.scrollY); // event.pageY - cpt.elem.offsetTop;
+					if (cpt.brush.LastX == null || cpt.brush.LastY == null) {
+						cpt.data[cpt.index].push({"Fct" : "beginPath" });
+						cpt.data[cpt.index].push({"Fct" : "moveTo", "X" : x, "Y" : y });
+						cpt.brush.LastX = x;
+						cpt.brush.LastY = y;
+					}
+					else {
+						cpt.data[cpt.index].push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+						cpt.data[cpt.index].push({"Fct" : "stroke" });
+						cpt.dim();
+						cpt.dat();	
+						cpt.brush.LastX = null;
+						cpt.brush.LastY = null;
+					}
+				}            
+				else if (cpt.brush.Slc.indexOf("Figur") !== -1) {
+					let x = event.pageX - (cpt.elem.getBoundingClientRect().left + window.scrollX);
+					let y = event.pageY - (cpt.elem.getBoundingClientRect().top + window.scrollY);
+					// let x = event.pageX - cpt.elem.offsetLeft;
+					// let y = event.pageY - cpt.elem.offsetTop;
+					let reset = false;
+					
+					if (cpt.brush.Buff.length > 0) {
+						// console.log("x : " + x + " y : " + y + " x1 : " + cpt.brush.Buff[1].X + " y1 " + cpt.brush.Buff[1].Y);
+						if (x >= (cpt.brush.Buff[1].X - 5) && x <= (cpt.brush.Buff[1].X + 5) && y >= (cpt.brush.Buff[1].Y - 5) && y <= (cpt.brush.Buff[1].Y + 5)) {
+							cpt.brush.Buff.push({"Fct" : "lineTo", "X" : cpt.brush.Buff[1].X, "Y" : cpt.brush.Buff[1].Y });
+							cpt.brush.Buff.push({"Fct" : "closePath" });
+							cpt.brush.Buff.push({"Fct" : "stroke" });
+							cpt.brush.Buff.push({"Fct" : "fill" });	
+							cpt.data[cpt.index] = cpt.data[cpt.index].concat(cpt.brush.Buff);
+							cpt.dat();  
+							cpt.brush.LastX = null;
+							cpt.brush.LastY = null;
+							cpt.brush.Buff = [];
+							reset = true;
+							/*
+							if (cpt.brush.Slc.indexOf("(Linie)") != -1) {
+								
+								alert(cpt.brush.Buff.length);
+							}
+							*/
+						}
+					}
+					if (!reset) {
+						if (cpt.brush.LastX == null || cpt.brush.LastY == null) {
+							cpt.brush.Buff.push({"Fct" : "beginPath" });
+							cpt.brush.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+							cpt.brush.LastX = x;
+							cpt.brush.LastY = y;
+						}
+						else {
+							cpt.brush.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
+							// cpt.brush.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
+							cpt.dim();
+							cpt.dat();
+							for (let i = 0; i < cpt.brush.Buff.length; i++) {
+								cpt.drafi( cpt.brush.Buff[i].Fct, 
+								cpt.brush.Buff[i].X, 
+								cpt.brush.Buff[i].Y
+								);
+							}
+							cpt.drafi("stroke");	
+							// cpt.drafi("fill");							
+						}
+					}                
+				}
+			});
+			cpt.elem.addEventListener("mouseup", function() {
+				cpt.drg = false;
+				if (document.getElementsByClassName(cpt.tools.id + "_dataToggler")[0].checked) {
+					//document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].innerHTML = "";
+					document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].value = JSON.stringify(cpt.data[cpt.index]);
+					document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].style.display = "block";
+					/*
+					for (let i = cpt.data[cpt.index].length; i >= 0; i--) {
+						let index = cpt.data[cpt.index].length - i;
+						let funky = cpt.data[cpt.index][index].Fct.toString();
+						document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].innerHTML += i 
+						+ " " + '<input type="text" value="' + funky + '"/><br/>';
+					}
+					*/
 				}
 				else {
-					cpt.data[cpt.index].push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-					cpt.data[cpt.index].push({"Fct" : "stroke" });
-					cpt.dim();
-					cpt.dat();	
-					cpt.brush.LastX = null;
-					cpt.brush.LastY = null;
+					document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].value = "";
+					document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].style.display = "none";
 				}
-			}            
-            else if (cpt.brush.Slc.indexOf("Figur") !== -1) {
-				let x = event.pageX - (cpt.elem.getBoundingClientRect().left + window.scrollX);
-				let y = event.pageY - (cpt.elem.getBoundingClientRect().top + window.scrollY);
-                // let x = event.pageX - cpt.elem.offsetLeft;
-				// let y = event.pageY - cpt.elem.offsetTop;
-                let reset = false;
-                
-                if (cpt.brush.Buff.length > 0) {
-                    // console.log("x : " + x + " y : " + y + " x1 : " + cpt.brush.Buff[1].X + " y1 " + cpt.brush.Buff[1].Y);
-                    if (x >= (cpt.brush.Buff[1].X - 5) && x <= (cpt.brush.Buff[1].X + 5) && y >= (cpt.brush.Buff[1].Y - 5) && y <= (cpt.brush.Buff[1].Y + 5)) {
-					    cpt.brush.Buff.push({"Fct" : "lineTo", "X" : cpt.brush.Buff[1].X, "Y" : cpt.brush.Buff[1].Y });
-                        cpt.brush.Buff.push({"Fct" : "closePath" });
-                        cpt.brush.Buff.push({"Fct" : "stroke" });
-                        cpt.brush.Buff.push({"Fct" : "fill" });	
-                        cpt.data[cpt.index] = cpt.data[cpt.index].concat(cpt.brush.Buff);
-		                cpt.dat();  
-                        cpt.brush.LastX = null;
-                        cpt.brush.LastY = null;
-                        cpt.brush.Buff = [];
-                        reset = true;
-                        /*
-                        if (cpt.brush.Slc.indexOf("(Linie)") != -1) {
-                            
-                            alert(cpt.brush.Buff.length);
-                        }
-                        */
-                    }
-                }
-                if (!reset) {
-                    if (cpt.brush.LastX == null || cpt.brush.LastY == null) {
-					    cpt.brush.Buff.push({"Fct" : "beginPath" });
-					    cpt.brush.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-					    cpt.brush.LastX = x;
-					    cpt.brush.LastY = y;
-				    }
-				    else {
-					    cpt.brush.Buff.push({"Fct" : "lineTo", "X" : x, "Y" : y });	
-                        // cpt.brush.Buff.push({"Fct" : "moveTo", "X" : x, "Y" : y });
-					    cpt.dim();
-					    cpt.dat();
-                        for (let i = 0; i < cpt.brush.Buff.length; i++) {
-                            cpt.drafi( cpt.brush.Buff[i].Fct, 
-					        cpt.brush.Buff[i].X, 
-					        cpt.brush.Buff[i].Y
-				            );
-                        }
-                        cpt.drafi("stroke");	
-                        // cpt.drafi("fill");							
-				    }
-                }                
-            }
-		});
-		cpt.elem.addEventListener("mouseup", function() {
-			cpt.drg = false;
-            if (document.getElementsByClassName(cpt.tools.id + "_dataToggler")[0].checked) {
-                //document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].innerHTML = "";
-                document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].value = JSON.stringify(cpt.data[cpt.index]);
-                document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].style.display = "block";
-                /*
-                for (let i = cpt.data[cpt.index].length; i >= 0; i--) {
-                    let index = cpt.data[cpt.index].length - i;
-                    let funky = cpt.data[cpt.index][index].Fct.toString();
-                    document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].innerHTML += i 
-                    + " " + '<input type="text" value="' + funky + '"/><br/>';
-                }
-                */
-            }
-            else {
-                document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].value = "";
-                document.getElementsByClassName(cpt.tools.id + "_dataEditArea")[0].style.display = "none";
-            }
-            /*
-			if (document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value != "Linie") {	
-				
-			}
-			else {
-				
-			}
-            */
-		});
-		cpt.elem.addEventListener("mouseout", function() {
-			cpt.drg = false;
-		});
+				/*
+				if (document.getElementsByClassName(cpt.tools.id + "_selectedFunction")[0].value != "Linie") {	
+					
+				}
+				else {
+					
+				}
+				*/
+			});
+			cpt.elem.addEventListener("mouseout", function() {
+				cpt.drg = false;
+			});
 		}
 		if (cpt.settings.fit) {
 			window.addEventListener("resize", cpt.ref);
